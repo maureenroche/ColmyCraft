@@ -12,19 +12,19 @@
 
 // Structure check point
 typedef struct CheckPoint {
-    int rayon;
-    int centreX;
-    int centreY;
-    int couleurR;
-    int couleurV;
-    int couleurB;
+  int rayon;
+  int centreX;
+  int centreY;
+  int couleurR;
+  int couleurV;
+  int couleurB;
 } CheckPoint;
 
 
 // Structure terrain
 typedef struct Terrain {
-    int nbCheckPoints;
-    CheckPoint tableCheckPoints[100];
+  int nbCheckPoints;
+  CheckPoint tableCheckPoints[100];
 } Terrain;
 
 
@@ -41,7 +41,7 @@ void reshape(unsigned int windowWidth, unsigned int windowHeight) {
   glViewport(0, 0, windowWidth, windowHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(-200.0, 200.0,-((float)windowHeight/windowWidth)*200, ((float)windowHeight/windowWidth)*200);
+  gluOrtho2D(0, windowWidth, 0, windowHeight);
 }
 
 void setVideoMode(unsigned int windowWidth, unsigned int windowHeight) {
@@ -72,162 +72,228 @@ void initTerrain(Terrain * terrain){
 
 // Lecture du fichier de terrain
 void lectureInfosTerrain(char chaine[], Terrain * terrain){
-    FILE *fichier = NULL;
-    fichier = fopen("terrain.txt", "r");
-    if (fichier == NULL){
-        exit(EXIT_FAILURE);
+  FILE *fichier = NULL;
+  fichier = fopen("terrain.txt", "r");
+  if (fichier == NULL){
+    exit(EXIT_FAILURE);
+  }
+  fgets(chaine, 400, fichier);
+
+  int i = 0, j = 0, k = 0, l = 0;
+  char nbCheckPoints[3];
+  char rayon[3];
+  char centreX[3];
+  char centreY[3];
+  char couleurR[3];
+  char couleurV[3];
+  char couleurB[3];
+
+  while(chaine[i] != '/') { // on parcourt jusqu'� la fin de la ligne
+  /* R�cup�ration du nombre de checkpoints */
+  if(chaine[i] == '-') {
+    i ++;
+    while(chaine[i] != '-') {
+      nbCheckPoints[j] = chaine[i];
+      i ++;
+      j ++;
     }
-    fgets(chaine, 100, fichier);
-
-    int i = 0, j = 0, k = 0, l = 0;
-    char nbCheckPoints[5];
-    char rayon[10];
-    char centreX[10];
-    char centreY[10];
-    char couleurR[3];
-    char couleurV[3];
-    char couleurB[3];
-
-    while(chaine[i] != '/') { // on parcourt jusqu'� la fin de la ligne
-        /* R�cup�ration du nombre de checkpoints */
-        if(chaine[i] == '-') {
-            i ++;
-            while(chaine[i] != '-') {
-                nbCheckPoints[j] = chaine[i];
-                i ++;
-                j ++;
-            }
-            terrain->nbCheckPoints = atol(nbCheckPoints);
+    terrain->nbCheckPoints = atol(nbCheckPoints);
+  }
+  /* R�cup�ration des donn�es de chaque checkpoints */
+  if(chaine[i] == '{'){
+    i ++;
+    while(chaine[i] != '}'){
+      // pour chaque checkpoint
+      if(chaine[i] == '['){
+        j = 0;
+        i++;
+        // Récupération des coordonnées x et y
+        while(chaine[i] != ',') {
+          centreX[j] = chaine[i];
+          j++;
+          i++;
         }
-        /* R�cup�ration des donn�es de chaque checkpoints */
-        if(chaine[i] == '{'){
-            i ++;
-            while(chaine[i] != '}'){
-                // pour chaque checkpoint
-                if(chaine[i] == '['){
-                    j = 0;
-                    i++;
-                    // Récupération des coordonnées x et y
-                    while(chaine[i] != ',') {
-                        centreX[j] = chaine[i];
-                        j++;
-                        i++;
-                    }
-                    j = 0;
-                    i++;
-                    while(chaine[i] != ';') {
-                        centreY[j] = chaine[i];
-                        j++;
-                        i++;
-                    }
-                    j = 0;
-                    i++;
-                    // Récupération du rayon
-                    while(chaine[i] != ';') {
-                        rayon[j] = chaine[i];
-                        j++;
-                        i++;
-                    }
-                    j = 0;
-                    i++;
-                    // Récupération des 3 couleurs
-                    while(chaine[i] != ',') {
-                        couleurR[j] = chaine[i];
-                        j++;
-                        i++;
-                    }
-                    j = 0;
-                    i++;
-                    while(chaine[i] != ',') {
-                        couleurV[j] = chaine[i];
-                        j++;
-                        i++;
-                    }
-                    j = 0;
-                    i++;
-                    while(chaine[i] != ']'){
-                        couleurB[j] = chaine[i];
-                        j++;
-                        i++;
-                    }
-                    terrain->tableCheckPoints[k].centreX = atol(centreX);
-                    terrain->tableCheckPoints[k].centreY = atol(centreY);
-                    terrain->tableCheckPoints[k].couleurR = atol(couleurR);
-                    terrain->tableCheckPoints[k].couleurV = atol(couleurV);
-                    terrain->tableCheckPoints[k].couleurB = atol(couleurB);
-                    terrain->tableCheckPoints[k].rayon = atol(rayon);
-                    // A AMELIORER
-                    for(l = 0; l <10; l++) {
-                        rayon[l] = ' ';
-                        centreX[l] = ' ';
-                        centreY[l] = ' ';
-                        couleurR[l] = ' ';
-                        couleurV[l] = ' ';
-                        couleurB[l] = ' ';
-                    }
-                    k++;
-                }
-                i++;
-            }
+        j = 0;
+        i++;
+        while(chaine[i] != ';') {
+          centreY[j] = chaine[i];
+          j++;
+          i++;
         }
-         i++;
+        j = 0;
+        i++;
+        // Récupération du rayon
+        while(chaine[i] != ';') {
+          rayon[j] = chaine[i];
+          j++;
+          i++;
+        }
+        j = 0;
+        i++;
+        // Récupération des 3 couleurs
+        while(chaine[i] != ',') {
+          couleurR[j] = chaine[i];
+          j++;
+          i++;
+        }
+        j = 0;
+        i++;
+        while(chaine[i] != ',') {
+          couleurV[j] = chaine[i];
+          j++;
+          i++;
+        }
+        j = 0;
+        i++;
+        while(chaine[i] != ']'){
+          couleurB[j] = chaine[i];
+          j++;
+          i++;
+        }
+        terrain->tableCheckPoints[k].centreX = atol(centreX);
+        terrain->tableCheckPoints[k].centreY = atol(centreY);
+        terrain->tableCheckPoints[k].couleurR = atol(couleurR);
+        terrain->tableCheckPoints[k].couleurV = atol(couleurV);
+        terrain->tableCheckPoints[k].couleurB = atol(couleurB);
+        terrain->tableCheckPoints[k].rayon = atol(rayon);
+        // A AMELIORER
+        for(l = 0; l <3; l++) {
+          rayon[l] = ' ';
+          centreX[l] = ' ';
+          centreY[l] = ' ';
+          couleurR[l] = ' ';
+          couleurV[l] = ' ';
+          couleurB[l] = ' ';
+        }
+        k++;
+      }
+      i++;
     }
-
-    fclose(fichier);
+  }
+  i++;
 }
 
-// terrain = malloc(sizeof(int) + atol(nbCheckPoints)*sizeof(CheckPoint));
-//
-// for(l=0; l<terrain->nbCheckPoints;i++){
-//   initCheckPoint(&(terrain->tableCheckPoints[l]));
-// }
+fclose(fichier);
+}
+
+void dessinCarre(){
+  glBegin(GL_POLYGON);
+  glVertex2f(-0.5,-0.5);
+  glVertex2f(-0.5, 0.5);
+  glVertex2f( 0.5, 0.5);
+  glVertex2f( 0.5,-0.5);
+  glEnd();
+}
+
+void dessinCercle(int full){
+  float angle=(M_PI*2)/SEGMENTS;
+  int i;
+  if(full==0){
+    glBegin(GL_LINE_LOOP);
+    for(i=0; i<SEGMENTS;i++){
+      glVertex2f(cos(i*angle)/2,sin(i*angle)/2);
+    }
+    glEnd();
+  }
+  else if(full==1){
+    glBegin(GL_POLYGON);
+    for(i=0; i<SEGMENTS;i++){
+      glVertex2f(cos(i*angle)/2,sin(i*angle)/2);
+    }
+    glEnd();
+  }
+}
+
+void dessinCarreArrondi(){
+  glPushMatrix();
+  glTranslatef(-0.5,0.5,0);
+  dessinCercle(1);
+  glPopMatrix();
+  glPushMatrix();
+  glTranslatef(0.5,0.5,0);
+  dessinCercle(1);
+  glPopMatrix();
+  glPushMatrix();
+  glTranslatef(-0.5,-0.5,0);
+  dessinCercle(1);
+  glPopMatrix();
+  glPushMatrix();
+  glTranslatef(0.5,-0.5,0);
+  dessinCercle(1);
+  glPopMatrix();
+
+  glPushMatrix();
+  glScalef(1,2,0);
+  dessinCarre();
+  glPopMatrix();
+  glPushMatrix();
+  glScalef(2,1,0);
+  dessinCarre();
+  glPopMatrix();
+}
+
 
 void dessinHovercraft() {
-    glBegin(GL_LINE_LOOP);
-        glVertex2f(-0.5,-0.5);
-        glVertex2f(-0.5, 0.5);
-        glVertex2f( 0.5, 0.5);
-        glVertex2f( 0.5,-0.5);
-    glEnd();
+  glPushMatrix();
+  glColor3f(244/255.0,244/255.0,244/255.0);
+  dessinCarreArrondi();
+  glPopMatrix();
+
+  glPushMatrix();
+  glColor3f(0,0,0);
+  glTranslatef(0,0.3,0);
+  glScalef(1.2,0.7,0);
+  dessinCarre();
+  glPopMatrix();
+
+  glPushMatrix();
+  glColor3f(0,0,0);
+  glTranslatef(0,-1,0);
+  dessinCercle(0);
+  glPopMatrix();
 }
 
 void dessinCheckPoint(CheckPoint cp) {
-    float diametre = 1;
-    float alpha;
-    int i;
-    glBegin(GL_LINES);
-    glColor3f(cp.couleurR, cp.couleurV, cp.couleurB);
-    for(i = 0; i <= SEGMENTS; i ++){
-        alpha = 2*PI*i/SEGMENTS;
-        glVertex2f(cos(alpha)*(diametre/2), sin(alpha)*(diametre/2));
-        alpha = 2*PI*(i+1)/SEGMENTS;
-        glVertex2f(cos(alpha)*(diametre/2), sin(alpha)*(diametre/2));
-     }
-     glColor3f(FOND_R, FOND_V, FOND_B);
-     glEnd();
+  float diametre = 1;
+  float alpha;
+  int i;
+
+  glPushMatrix();
+  glTranslatef(cp.centreX, cp.centreY, 0);
+  glScalef(cp.rayon, cp.rayon, 1);
+
+  glBegin(GL_POLYGON);
+  glColor3f(cp.couleurR/255.0, cp.couleurV/255.0, cp.couleurB/255.0);
+  for(i = 0; i <= SEGMENTS; i ++){
+    alpha = 2*PI*i/SEGMENTS;
+    glVertex2f(cos(alpha)*(diametre/2), sin(alpha)*(diametre/2));
+    alpha = 2*PI*(i+1)/SEGMENTS;
+    glVertex2f(cos(alpha)*(diametre/2), sin(alpha)*(diametre/2));
+  }
+  glColor3f(1,1,1);
+  glEnd();
+  glPopMatrix();
 }
-
-
 
 int main(int argc, char** argv) {
 
-    if(argc != 2){
-      printf("usage : %s terrain.txt\n",argv[0]);
-      return EXIT_FAILURE;
-    }
+  if(argc != 2){
+    printf("usage : %s terrain.txt\n",argv[0]);
+    return EXIT_FAILURE;
+  }
 
-    Terrain terrain;
-    initTerrain(&terrain);
-    char infosTerrain[200] = "";
-    int i;
+  Terrain terrain;
+  initTerrain(&terrain);
+  char infosTerrain[200] = "";
+  int i;
 
-    int directionX = 0, directionY = 0, acceleration = 1;
-    /* Lecture des infos du terrain et initialisation du terrain */
-    lectureInfosTerrain(infosTerrain, &terrain);
-    for(i = 0; i < terrain.nbCheckPoints; i ++) {
-        printf("checkpoint num %d : centreX %d, centreY %d, R %d, V %d, B %d, rayon %d \n", i, terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY,
-               terrain.tableCheckPoints[i].couleurR, terrain.tableCheckPoints[i].couleurV, terrain.tableCheckPoints[i].couleurR, terrain.tableCheckPoints[i].rayon);
-    }
+  int directionX = 0, directionY = 0, acceleration = 1;
+  /* Lecture des infos du terrain et initialisation du terrain */
+  lectureInfosTerrain(infosTerrain, &terrain);
+  for(i = 0; i < terrain.nbCheckPoints; i ++) {
+    printf("checkpoint num %d : centreX %d, centreY %d, R %d, V %d, B %d, rayon %d \n", i, terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY,
+    terrain.tableCheckPoints[i].couleurR, terrain.tableCheckPoints[i].couleurV, terrain.tableCheckPoints[i].couleurB, terrain.tableCheckPoints[i].rayon);
+  }
 
   /* Dimensions de la fenêtre */
   unsigned int windowWidth  = 1500;
@@ -254,23 +320,21 @@ int main(int argc, char** argv) {
 
     /* Placer ici le code de dessin */
     glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(FOND_R/255.0,FOND_V/255.0,FOND_B/255.0,1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    /// DESSIN D'UN CARRE POUR TESTER LE MOUVEMENT !!
-    glPushMatrix();
-        glScalef(10,10,1);
-        glTranslatef(directionX*acceleration, directionY*acceleration, 0);
-        dessinHovercraft();
-    glPopMatrix();
-
     /// DESSIN DES CHECKPOINTS
     for(i = 0; i < terrain.nbCheckPoints; i ++) {
-        glPushMatrix();
-
-        glPopMatrix();
+      dessinCheckPoint(terrain.tableCheckPoints[i]);
     }
 
+    /// DESSIN DU HOVERCRAFT !!
+    glPushMatrix();
+    glScalef(60,60,1);
+    glTranslatef(directionX*acceleration, directionY*acceleration, 0);
+    dessinHovercraft();
+    glPopMatrix();
 
     /* Echange du front et du back buffer : mise �  jour de la fenêtre */
     SDL_GL_SwapBuffers();
@@ -288,42 +352,42 @@ int main(int argc, char** argv) {
       switch(e.type) {
         /* resize window */
         case SDL_VIDEORESIZE:
-              windowWidth  = e.resize.w;
-              windowHeight = e.resize.h;
-              setVideoMode(windowWidth, windowHeight);
-              reshape(windowWidth, windowHeight);
-          break;
+        windowWidth  = e.resize.w;
+        windowHeight = e.resize.h;
+        setVideoMode(windowWidth, windowHeight);
+        reshape(windowWidth, windowHeight);
+        break;
 
         // gestion des touches du clavier
         case SDL_KEYDOWN:
-            switch( e.key.keysym.sym ){
-                case SDLK_RIGHT:
-                    directionX ++;
-                    break;
+        switch( e.key.keysym.sym ){
+          case SDLK_RIGHT:
+          directionX ++;
+          break;
 
-                case SDLK_LEFT:
-                    directionX --;
-                    break;
+          case SDLK_LEFT:
+          directionX --;
+          break;
 
-                case SDLK_UP:
-                    directionY ++;
-                    break;
+          case SDLK_UP:
+          directionY ++;
+          break;
 
-                case SDLK_DOWN:
-                    directionY --;
-                    break;
+          case SDLK_DOWN:
+          directionY --;
+          break;
 
-                case SDLK_SPACE:
-                    acceleration ++;
-                    break;
+          case SDLK_SPACE:
+          acceleration ++;
+          break;
 
-                default:
-                  break;
-            }
-            break;
+          default:
+          break;
+        }
+        break;
 
-            default:
-            break;
+        default:
+        break;
       }
     }
 
