@@ -84,6 +84,9 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
     char rayon[10];
     char centreX[10];
     char centreY[10];
+    char couleurR[3];
+    char couleurV[3];
+    char couleurB[3];
 
     while(chaine[i] != '/') { // on parcourt jusqu'� la fin de la ligne
         /* R�cup�ration du nombre de checkpoints */
@@ -104,24 +107,63 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
                 if(chaine[i] == '['){
                     j = 0;
                     i++;
-                    while(chaine[i] != ';') {
+                    // Récupération des coordonnées x et y
+                    while(chaine[i] != ',') {
                         centreX[j] = chaine[i];
                         j++;
                         i++;
                     }
                     j = 0;
                     i++;
-                    while(chaine[i] != ']'){
+                    while(chaine[i] != ';') {
+                        centreY[j] = chaine[i];
+                        j++;
+                        i++;
+                    }
+                    j = 0;
+                    i++;
+                    // Récupération du rayon
+                    while(chaine[i] != ';') {
                         rayon[j] = chaine[i];
                         j++;
                         i++;
                     }
+                    j = 0;
+                    i++;
+                    // Récupération des 3 couleurs
+                    while(chaine[i] != ',') {
+                        couleurR[j] = chaine[i];
+                        j++;
+                        i++;
+                    }
+                    j = 0;
+                    i++;
+                    while(chaine[i] != ',') {
+                        couleurV[j] = chaine[i];
+                        j++;
+                        i++;
+                    }
+                    j = 0;
+                    i++;
+                    while(chaine[i] != ']'){
+                        couleurB[j] = chaine[i];
+                        j++;
+                        i++;
+                    }
                     terrain->tableCheckPoints[k].centreX = atol(centreX);
+                    terrain->tableCheckPoints[k].centreY = atol(centreY);
+                    terrain->tableCheckPoints[k].couleurR = atol(couleurR);
+                    terrain->tableCheckPoints[k].couleurV = atol(couleurV);
+                    terrain->tableCheckPoints[k].couleurB = atol(couleurB);
                     terrain->tableCheckPoints[k].rayon = atol(rayon);
                     // A AMELIORER
                     for(l = 0; l <10; l++) {
                         rayon[l] = ' ';
                         centreX[l] = ' ';
+                        centreY[l] = ' ';
+                        couleurR[l] = ' ';
+                        couleurV[l] = ' ';
+                        couleurB[l] = ' ';
                     }
                     k++;
                 }
@@ -183,7 +225,8 @@ int main(int argc, char** argv) {
     /* Lecture des infos du terrain et initialisation du terrain */
     lectureInfosTerrain(infosTerrain, &terrain);
     for(i = 0; i < terrain.nbCheckPoints; i ++) {
-        printf("checkpoint num %d : centre %d, rayon %d \n", i, terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].rayon);
+        printf("checkpoint num %d : centreX %d, centreY %d, R %d, V %d, B %d, rayon %d \n", i, terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY,
+               terrain.tableCheckPoints[i].couleurR, terrain.tableCheckPoints[i].couleurV, terrain.tableCheckPoints[i].couleurR, terrain.tableCheckPoints[i].rayon);
     }
 
   /* Dimensions de la fenêtre */
@@ -224,7 +267,7 @@ int main(int argc, char** argv) {
     /// DESSIN DES CHECKPOINTS
     for(i = 0; i < terrain.nbCheckPoints; i ++) {
         glPushMatrix();
-            
+
         glPopMatrix();
     }
 
