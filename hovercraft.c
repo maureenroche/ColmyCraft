@@ -24,7 +24,7 @@ typedef struct CheckPoint {
 // Structure terrain
 typedef struct Terrain {
     int nbCheckPoints;
-    CheckPoint* tableCheckPoints;
+    CheckPoint tableCheckPoints[100];
 } Terrain;
 
 
@@ -34,7 +34,7 @@ static const unsigned int BIT_PER_PIXEL = 32;
 /* Nombre minimal de millisecondes separant le rendu de deux images */
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
-/* Nombre max de points dessinés*/
+/* Nombre max de points dessinï¿½s*/
 static const unsigned int NB_MAX_PT = 50;
 
 void reshape(unsigned int windowWidth, unsigned int windowHeight) {
@@ -51,6 +51,26 @@ void setVideoMode(unsigned int windowWidth, unsigned int windowHeight) {
   }
 }
 
+// Initialisation CheckPoint
+void initCheckPoint(CheckPoint *point){
+  point->rayon = 0;
+  point->centreX = 0;
+  point->centreY = 0;
+  point->couleurR = 0;
+  point->couleurV = 0;
+  point->couleurB = 0;
+}
+
+// Initialisation Terrain
+void initTerrain(Terrain * terrain){
+  terrain->nbCheckPoints = 0;
+  int i;
+  for (i = 0; i < 100; i++) {
+    initCheckPoint(&(terrain->tableCheckPoints[i]));
+  }
+}
+
+// Lecture du fichier de terrain
 void lectureInfosTerrain(char chaine[], Terrain * terrain){
     FILE *fichier = NULL;
     fichier = fopen("terrain.txt", "r");
@@ -60,12 +80,13 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
     fgets(chaine, 100, fichier);
 
     int i = 0, j = 0, k = 0, l = 0;
-    char nbCheckPoints[10];
+    char nbCheckPoints[5];
     char rayon[10];
     char centreX[10];
     char centreY[10];
-    while(chaine[i] != '/') { // on parcourt jusqu'à la fin de la ligne
-        /* Récupération du nombre de checkpoints */
+
+    while(chaine[i] != '/') { // on parcourt jusqu'ï¿½ la fin de la ligne
+        /* Rï¿½cupï¿½ration du nombre de checkpoints */
         if(chaine[i] == '-') {
             i ++;
             while(chaine[i] != '-') {
@@ -73,8 +94,9 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
                 i ++;
                 j ++;
             }
+            terrain->nbCheckPoints = atol(nbCheckPoints);
         }
-        /* Récupération des données de chaque checkpoints */
+        /* Rï¿½cupï¿½ration des donnï¿½es de chaque checkpoints */
         if(chaine[i] == '{'){
             i ++;
             while(chaine[i] != '}'){
@@ -82,7 +104,7 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
                 if(chaine[i] == '['){
                     j = 0;
                     i++;
-                    while(chaine[i] != ',') {
+                    while(chaine[i] != ';') {
                         centreX[j] = chaine[i];
                         j++;
                         i++;
@@ -106,11 +128,17 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
                 i++;
             }
         }
-        i++;
+         i++;
     }
-    terrain->nbCheckPoints = atol(nbCheckPoints);
+
     fclose(fichier);
 }
+
+// terrain = malloc(sizeof(int) + atol(nbCheckPoints)*sizeof(CheckPoint));
+//
+// for(l=0; l<terrain->nbCheckPoints;i++){
+//   initCheckPoint(&(terrain->tableCheckPoints[l]));
+// }
 
 void dessinHovercraft() {
     glBegin(GL_LINE_LOOP);
@@ -147,6 +175,7 @@ int main(int argc, char** argv) {
     }
 
     Terrain terrain;
+    initTerrain(&terrain);
     char infosTerrain[200] = "";
     int i;
 
@@ -167,7 +196,7 @@ int main(int argc, char** argv) {
     return EXIT_FAILURE;
   }
 
-  /* Ouverture d'une fenétre et création d'un contexte OpenGL */
+  /* Ouverture d'une fenï¿½tre et crï¿½ation d'un contexte OpenGL */
   setVideoMode(windowWidth, windowHeight);
   reshape(windowWidth,windowHeight);
 
@@ -177,7 +206,7 @@ int main(int argc, char** argv) {
   /* Boucle d'affichage */
   int loop = 1;
   while(loop) {
-    /* Récupération du temps au dÃ©but de la boucle */
+    /* Rï¿½cupï¿½ration du temps au dÃ©but de la boucle */
     Uint32 startTime = SDL_GetTicks();
 
     /* Placer ici le code de dessin */
@@ -195,12 +224,12 @@ int main(int argc, char** argv) {
     /// DESSIN DES CHECKPOINTS
     for(i = 0; i < terrain.nbCheckPoints; i ++) {
         glPushMatrix();
-            printf("dessin cercle %d \n", i);
+            
         glPopMatrix();
     }
 
 
-    /* Echange du front et du back buffer : mise Ã  jour de la fenÃªtre */
+    /* Echange du front et du back buffer : mise ï¿½  jour de la fenÃªtre */
     SDL_GL_SwapBuffers();
 
     /* Boucle traitant les evenements */
@@ -255,16 +284,16 @@ int main(int argc, char** argv) {
       }
     }
 
-    /* Calcul du temps écoulé */
+    /* Calcul du temps ï¿½coulï¿½ */
     Uint32 elapsedTime = SDL_GetTicks() - startTime;
 
-    /* Si trop peu de temps s'est écoulé, on met en pause le programme */
+    /* Si trop peu de temps s'est ï¿½coulï¿½, on met en pause le programme */
     if(elapsedTime < FRAMERATE_MILLISECONDS) {
       SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
     }
   }
 
-  /* Liberation des ressources associées Ã  la SDL */
+  /* Liberation des ressources associï¿½es ï¿½  la SDL */
   SDL_Quit();
 
   return EXIT_SUCCESS;
