@@ -18,6 +18,7 @@ typedef struct CheckPoint {
   int couleurR;
   int couleurV;
   int couleurB;
+  int visible;
 } CheckPoint;
 
 
@@ -156,6 +157,7 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
         terrain->tableCheckPoints[k].couleurV = atol(couleurV);
         terrain->tableCheckPoints[k].couleurB = atol(couleurB);
         terrain->tableCheckPoints[k].rayon = atol(rayon);
+        terrain->tableCheckPoints[k].visible = 1;
         // A AMELIORER
         for(l = 0; l <3; l++) {
           rayon[l] = ' ';
@@ -206,50 +208,50 @@ void dessinCercle(int full){
 
 void dessinCarreArrondi(){
   glPushMatrix();
-  glTranslatef(-0.5,0.5,0);
-  dessinCercle(1);
+    glTranslatef(-0.5,0.5,0);
+    dessinCercle(1);
   glPopMatrix();
   glPushMatrix();
-  glTranslatef(0.5,0.5,0);
-  dessinCercle(1);
+    glTranslatef(0.5,0.5,0);
+    dessinCercle(1);
   glPopMatrix();
   glPushMatrix();
-  glTranslatef(-0.5,-0.5,0);
-  dessinCercle(1);
+    glTranslatef(-0.5,-0.5,0);
+    dessinCercle(1);
   glPopMatrix();
   glPushMatrix();
-  glTranslatef(0.5,-0.5,0);
-  dessinCercle(1);
+    glTranslatef(0.5,-0.5,0);
+    dessinCercle(1);
   glPopMatrix();
 
   glPushMatrix();
-  glScalef(1,2,0);
-  dessinCarre();
+    glScalef(1,2,0);
+    dessinCarre();
   glPopMatrix();
   glPushMatrix();
-  glScalef(2,1,0);
-  dessinCarre();
+    glScalef(2,1,0);
+    dessinCarre();
   glPopMatrix();
 }
 
 
 void dessinHovercraft() {
   glPushMatrix();
-  glColor3f(244/255.0,244/255.0,244/255.0);
-  dessinCarreArrondi();
+    glColor3f(244/255.0,244/255.0,244/255.0);
+    dessinCarreArrondi();
   glPopMatrix();
 
   glPushMatrix();
-  glColor3f(0,0,0);
-  glTranslatef(0,0.3,0);
-  glScalef(1.2,0.7,0);
-  dessinCarre();
+    glColor3f(0,0,0);
+    glTranslatef(0,0.3,0);
+    glScalef(1.2,0.7,0);
+    dessinCarre();
   glPopMatrix();
 
   glPushMatrix();
-  glColor3f(0,0,0);
-  glTranslatef(0,-1,0);
-  dessinCercle(0);
+    glColor3f(0,0,0);
+    glTranslatef(0,-1,0);
+    dessinCercle(0);
   glPopMatrix();
 }
 
@@ -258,7 +260,6 @@ void dessinCheckPoint(CheckPoint cp) {
   float alpha;
   int i;
 
-  glPushMatrix();
   glTranslatef(cp.centreX, cp.centreY, 0);
   glScalef(cp.rayon, cp.rayon, 1);
 
@@ -272,7 +273,17 @@ void dessinCheckPoint(CheckPoint cp) {
   }
   glColor3f(1,1,1);
   glEnd();
-  glPopMatrix();
+}
+
+int aGagne(Terrain t) {
+  int gagne = 1;
+  int i;
+  for(i = 0; i < t.nbCheckPoints; i++) {
+    if(t.tableCheckPoints[i].visible == 1) {
+      gagne = 0;
+    }
+  }
+  return gagne;
 }
 
 int main(int argc, char** argv) {
@@ -286,8 +297,8 @@ int main(int argc, char** argv) {
   initTerrain(&terrain);
   char infosTerrain[200] = "";
   int i;
-
-  int directionX = 0, directionY = 0, acceleration = 1;
+  float chrono = 0;
+  int directionX = 60, directionY = 90, acceleration = 1, rotation = 1;
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain);
   for(i = 0; i < terrain.nbCheckPoints; i ++) {
@@ -324,16 +335,25 @@ int main(int argc, char** argv) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
+    chrono ++;
+    if(aGagne(terrain) == 1) {
+      loop = 0;
+      printf("vous avez gagné en %f secondes !", chrono/24);
+    }
     /// DESSIN DES CHECKPOINTS
     for(i = 0; i < terrain.nbCheckPoints; i ++) {
-      dessinCheckPoint(terrain.tableCheckPoints[i]);
+      if(terrain.tableCheckPoints[i].visible == 1) {
+        glPushMatrix();
+          dessinCheckPoint(terrain.tableCheckPoints[i]);
+        glPopMatrix();
+      }
     }
 
     /// DESSIN DU HOVERCRAFT !!
     glPushMatrix();
-    glScalef(60,60,1);
-    glTranslatef(directionX*acceleration, directionY*acceleration, 0);
-    dessinHovercraft();
+      glTranslatef(directionX*acceleration, directionY*acceleration, 0);
+      glScalef(60,60,1);
+      dessinHovercraft();
     glPopMatrix();
 
     /* Echange du front et du back buffer : mise �  jour de la fenêtre */
@@ -345,6 +365,7 @@ int main(int argc, char** argv) {
       /* L'utilisateur ferme la fenetre : */
       if(e.type == SDL_QUIT) {
         loop = 0;
+        printf("Temps de jeu écoulé : %f\n", chrono/24);
         break;
       }
 
@@ -378,7 +399,7 @@ int main(int argc, char** argv) {
           break;
 
           case SDLK_SPACE:
-          acceleration ++;
+          //acceleration ++;
           break;
 
           default:
