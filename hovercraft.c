@@ -286,6 +286,23 @@ int aGagne(Terrain t) {
   return gagne;
 }
 
+void collision(int positionX, int positionY, int tailleX, int tailleY, Terrain * terrain) {
+  int i;
+  int x = positionX + tailleX;
+  int y = positionY + tailleY;
+  int xCercle, yCercle;
+  for(i = 0; i < terrain->nbCheckPoints; i ++)
+  {
+    if((x >= terrain->tableCheckPoints[i].centreX - terrain->tableCheckPoints[i].rayon)&&
+        (x <= terrain->tableCheckPoints[i].centreX + terrain->tableCheckPoints[i].rayon) &&
+        (y >= terrain->tableCheckPoints[i].centreY - terrain->tableCheckPoints[i].rayon) &&
+        (y <= terrain->tableCheckPoints[i].centreY + terrain->tableCheckPoints[i].rayon))
+    {
+      terrain->tableCheckPoints[i].visible = 0;
+    }
+  }
+}
+
 int main(int argc, char** argv) {
 
   if(argc != 2){
@@ -298,7 +315,8 @@ int main(int argc, char** argv) {
   char infosTerrain[200] = "";
   int i;
   float chrono = 0;
-  int directionX = 60, directionY = 90, acceleration = 1, rotation = 1;
+  int avance;
+  int positionX = 60, positionY = 90, acceleration = 1, rotation = 1;
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain);
   for(i = 0; i < terrain.nbCheckPoints; i ++) {
@@ -351,10 +369,12 @@ int main(int argc, char** argv) {
 
     /// DESSIN DU HOVERCRAFT !!
     glPushMatrix();
-      glTranslatef(directionX*acceleration, directionY*acceleration, 0);
+      glTranslatef(positionX*acceleration, positionY*acceleration, 0);
       glScalef(60,60,1);
       dessinHovercraft();
     glPopMatrix();
+
+   collision(positionX, positionY, 60, 60, &terrain); // taille de l'hovercraft + sa position
 
     /* Echange du front et du back buffer : mise �  jour de la fenêtre */
     SDL_GL_SwapBuffers();
@@ -381,21 +401,22 @@ int main(int argc, char** argv) {
 
         // gestion des touches du clavier
         case SDL_KEYDOWN:
+        avance = 1;
         switch( e.key.keysym.sym ){
           case SDLK_RIGHT:
-          directionX ++;
-          break;
+              positionX  = positionX + 50;
+            break;
 
           case SDLK_LEFT:
-          directionX --;
+          positionX  = positionX - 50;
           break;
 
           case SDLK_UP:
-          directionY ++;
+          positionY = positionY + 50;
           break;
 
           case SDLK_DOWN:
-          directionY --;
+          positionY  = positionY - 50;
           break;
 
           case SDLK_SPACE:
@@ -405,6 +426,10 @@ int main(int argc, char** argv) {
           default:
           break;
         }
+        break;
+
+        case SDL_KEYUP:
+          avance = 0;
         break;
 
         default:
