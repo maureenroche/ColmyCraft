@@ -6,9 +6,9 @@
 #include <math.h>
 #define SEGMENTS 60
 #define PI 3.14
-#define FOND_R 69
-#define FOND_V 141
-#define FOND_B 244
+#define FOND_R 0
+#define FOND_V 128
+#define FOND_B 232
 
 // Structure check point
 typedef struct CheckPoint {
@@ -178,81 +178,87 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
 fclose(fichier);
 }
 
-void dessinCarre(){
-  glBegin(GL_POLYGON);
-  glVertex2f(-0.5,-0.5);
-  glVertex2f(-0.5, 0.5);
-  glVertex2f( 0.5, 0.5);
-  glVertex2f( 0.5,-0.5);
-  glEnd();
+void dessinCarre(int full){
+  if(full==0){
+    glBegin(GL_LINE_LOOP);
+      glVertex2f(-0.5,-0.5);
+      glVertex2f(-0.5, 0.5);
+      glVertex2f( 0.5, 0.5);
+      glVertex2f( 0.5,-0.5);
+    glEnd();
+  }
+  else if(full==1){
+    glBegin(GL_POLYGON);
+      glVertex2f(-0.5,-0.5);
+      glVertex2f(-0.5, 0.5);
+      glVertex2f( 0.5, 0.5);
+      glVertex2f( 0.5,-0.5);
+    glEnd();
+  }
 }
 
-void dessinCercle(int full){
-  float angle=(M_PI*2)/SEGMENTS;
+void dessinCercle(int nbTraits,int full){
+  float angle=(M_PI*2)/nbTraits;
   int i;
   if(full==0){
     glBegin(GL_LINE_LOOP);
-    for(i=0; i<SEGMENTS;i++){
+    for(i=0; i<nbTraits;i++){
       glVertex2f(cos(i*angle)/2,sin(i*angle)/2);
     }
     glEnd();
   }
   else if(full==1){
     glBegin(GL_POLYGON);
-    for(i=0; i<SEGMENTS;i++){
+    for(i=0; i<nbTraits;i++){
       glVertex2f(cos(i*angle)/2,sin(i*angle)/2);
     }
     glEnd();
   }
 }
 
-void dessinCarreArrondi(){
-  glPushMatrix();
-    glTranslatef(-0.5,0.5,0);
-    dessinCercle(1);
-  glPopMatrix();
-  glPushMatrix();
-    glTranslatef(0.5,0.5,0);
-    dessinCercle(1);
-  glPopMatrix();
-  glPushMatrix();
-    glTranslatef(-0.5,-0.5,0);
-    dessinCercle(1);
-  glPopMatrix();
-  glPushMatrix();
-    glTranslatef(0.5,-0.5,0);
-    dessinCercle(1);
-  glPopMatrix();
-
-  glPushMatrix();
-    glScalef(1,2,0);
-    dessinCarre();
-  glPopMatrix();
-  glPushMatrix();
-    glScalef(2,1,0);
-    dessinCarre();
-  glPopMatrix();
-}
-
-
 void dessinHovercraft() {
-  glPushMatrix();
-    glColor3f(244/255.0,244/255.0,244/255.0);
-    dessinCarreArrondi();
-  glPopMatrix();
+    //Structure : cercle
+    glPushMatrix();
+      glColor3f(0.15,0.15,0.15);
+      dessinCercle(100,1);
+    glPopMatrix();
 
-  glPushMatrix();
-    glColor3f(0,0,0);
-    glTranslatef(0,0.3,0);
-    glScalef(1.2,0.7,0);
-    dessinCarre();
-  glPopMatrix();
+    //Tableau de bord
+    glPushMatrix();
+      glColor3f(0,0,0);
+      glScalef(0.8,0.8,1);
+      dessinCercle(100,1);
+    glPopMatrix();
 
-  glPushMatrix();
-    glColor3f(0,0,0);
-    glTranslatef(0,-1,0);
-    dessinCercle(0);
-  glPopMatrix();
+    //Moteur
+    glPushMatrix();
+      glLineWidth(5);
+      glColor3f(0,0,0);
+      glTranslatef(0,-0.5,0);
+      glScalef(0.4,0.4,1);
+      dessinCercle(200,0);
+    glPopMatrix();
+
+    //Structure : carré
+    glPushMatrix();
+      glColor3f(0.15,0.15,0.15);
+      glTranslatef(0,-0.25,0);
+      glScalef(1,0.5,1);
+      dessinCarre(1);
+    glPopMatrix();
+
+    // Dessin en M
+    glPushMatrix();
+      glColor3f(0,0,0);
+      glLineWidth(1);
+      glBegin(GL_LINE_LOOP);
+        glVertex2f(-0.5,-0.5);
+        glVertex2f(-0.1, 0);
+        glVertex2f(0, -0.5);
+        glVertex2f(0.1, 0);
+        glVertex2f(0.5,-0.5);
+      glEnd();
+    glPopMatrix();
 }
 
 void dessinCheckPoint(CheckPoint cp) {
