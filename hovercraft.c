@@ -28,6 +28,16 @@ typedef struct Terrain {
   CheckPoint tableCheckPoints[100];
 } Terrain;
 
+// Structure Hovercraft
+typedef struct Hovercraft {
+    int positionX;
+    int positionY;
+    int tailleX;
+    int tailleY;
+    int anglePosition;
+    float vitesse;
+} Hovercraft;
+
 
 /* Nombre de bits par pixel de la fenêtre */
 static const unsigned int BIT_PER_PIXEL = 32;
@@ -71,6 +81,16 @@ void initTerrain(Terrain * terrain){
   }
 }
 
+// Initialisation de l'hovercraft
+void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
+    h->anglePosition = 0;
+    h->positionX = x;
+    h->positionY = y;
+    h->tailleX = tailleX;
+    h->tailleY = tailleY;
+    h->vitesse = 0.0;
+}
+
 // Lecture du fichier de terrain
 void lectureInfosTerrain(char chaine[], Terrain * terrain){
   FILE *fichier = NULL;
@@ -78,26 +98,28 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
   if (fichier == NULL){
     exit(EXIT_FAILURE);
   }
-  fgets(chaine, 400, fichier);
+  fgets(chaine, 800, fichier);
 
   int i = 0, j = 0, k = 0, l = 0;
-  char nbCheckPoints[3];
-  char rayon[3];
-  char centreX[3];
-  char centreY[3];
-  char couleurR[3];
-  char couleurV[3];
-  char couleurB[3];
-
-  while(chaine[i] != '/') { // on parcourt jusqu'� la fin de la ligne
+  char nbCheckPoints[10];
+  char rayon[10];
+  char centreX[10];
+  char centreY[10];
+  char couleurR[10];
+  char couleurV[10];
+  char couleurB[10];
+    printf("%s \n",chaine);
+  while(chaine[i] != '\\') { // on parcourt jusqu'� la fin de la ligne
   /* R�cup�ration du nombre de checkpoints */
   if(chaine[i] == '-') {
     i ++;
+    printf("%d %d\n", i, j);
     while(chaine[i] != '-') {
       nbCheckPoints[j] = chaine[i];
       i ++;
       j ++;
     }
+    printf("%d %d\n", i, j);
     terrain->nbCheckPoints = atol(nbCheckPoints);
   }
   /* R�cup�ration des donn�es de chaque checkpoints */
@@ -171,10 +193,10 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
       }
       i++;
     }
+    printf("%d\n", i);
   }
   i++;
 }
-
 fclose(fichier);
 }
 
@@ -296,7 +318,6 @@ void collision(int positionX, int positionY, int tailleX, int tailleY, Terrain *
   int i;
   int x = positionX + tailleX;
   int y = positionY + tailleY;
-  int xCercle, yCercle;
   for(i = 0; i < terrain->nbCheckPoints; i ++)
   {
     if((x >= terrain->tableCheckPoints[i].centreX - terrain->tableCheckPoints[i].rayon)&&
@@ -318,17 +339,14 @@ int main(int argc, char** argv) {
 
   Terrain terrain;
   initTerrain(&terrain);
-  char infosTerrain[200] = "";
+  char infosTerrain[800] = "";
   int i;
   float chrono = 0;
-  int avance;
-  int positionX = 60, positionY = 90, acceleration = 1, rotation = 1;
+
+  Hovercraft colmycraft;
+  initHovercraft(&colmycraft, 60, 90, 60, 60);
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain);
-  for(i = 0; i < terrain.nbCheckPoints; i ++) {
-    printf("checkpoint num %d : centreX %d, centreY %d, R %d, V %d, B %d, rayon %d \n", i, terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY,
-    terrain.tableCheckPoints[i].couleurR, terrain.tableCheckPoints[i].couleurV, terrain.tableCheckPoints[i].couleurB, terrain.tableCheckPoints[i].rayon);
-  }
 
   /* Dimensions de la fenêtre */
   unsigned int windowWidth  = 1500;
@@ -373,14 +391,14 @@ int main(int argc, char** argv) {
       }
     }
 
-    /// DESSIN DU HOVERCRAFT !!
+    /// DESSIN DE L'HOVERCRAFT !!
     glPushMatrix();
-      glTranslatef(positionX*acceleration, positionY*acceleration, 0);
-      glScalef(60,60,1);
+      glTranslatef(colmycraft.positionX, colmycraft.positionY, 0);
+      glScalef(colmycraft.tailleX,colmycraft.tailleY,1);
       dessinHovercraft();
     glPopMatrix();
 
-   collision(positionX, positionY, 60, 60, &terrain); // taille de l'hovercraft + sa position
+   collision(colmycraft.positionX, colmycraft.positionY, colmycraft.tailleX, colmycraft.tailleY, &terrain); // taille de l'hovercraft + sa position
 
     /* Echange du front et du back buffer : mise �  jour de la fenêtre */
     SDL_GL_SwapBuffers();
@@ -407,35 +425,26 @@ int main(int argc, char** argv) {
 
         // gestion des touches du clavier
         case SDL_KEYDOWN:
-        avance = 1;
         switch( e.key.keysym.sym ){
           case SDLK_RIGHT:
-              positionX  = positionX + 50;
+              colmycraft.positionX  += 50;
             break;
 
           case SDLK_LEFT:
-          positionX  = positionX - 50;
+            colmycraft.positionX  -= 50;
           break;
 
           case SDLK_UP:
-          positionY = positionY + 50;
+          colmycraft.positionY  += 50;
           break;
 
           case SDLK_DOWN:
-          positionY  = positionY - 50;
-          break;
-
-          case SDLK_SPACE:
-          //acceleration ++;
+          colmycraft.positionY  -= 50;
           break;
 
           default:
           break;
         }
-        break;
-
-        case SDL_KEYUP:
-          avance = 0;
         break;
 
         default:
@@ -452,7 +461,7 @@ int main(int argc, char** argv) {
     }
   }
 
-  /* Liberation des ressources associ�es �  la SDL */
+  /* Liberation des ressources associ�es �  la L */
   SDL_Quit();
 
   return EXIT_SUCCESS;
