@@ -4,11 +4,12 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#define PI 3.141592653589793
 #define SEGMENTS 60
-#define PI 3.14
 #define FOND_R 0
 #define FOND_V 128
 #define FOND_B 232
+#define VITESSE_MAX 20
 
 // Structure check point
 typedef struct CheckPoint {
@@ -34,8 +35,16 @@ typedef struct Hovercraft {
     int positionY;
     int tailleX;
     int tailleY;
+    /* angle de départ */
     int anglePosition;
+    /* angle de déviation */
+    int angleMouvement;
+    /* vitesse à l'instant t, en pixels par image */
     float vitesse;
+    /* valeur d'augmentation de la vitesse en pixels par image */
+    float acceleration;
+    /* valeur de diminution de la vitesse en pixels par image */
+    float deceleration;
 } Hovercraft;
 
 
@@ -83,12 +92,15 @@ void initTerrain(Terrain * terrain){
 
 // Initialisation de l'hovercraft
 void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
-    h->anglePosition = 0;
-    h->positionX = x;
-    h->positionY = y;
-    h->tailleX = tailleX;
-    h->tailleY = tailleY;
-    h->vitesse = 0.0;
+  h->anglePosition = 90;
+  h->angleMouvement = 45;
+  h->positionX = x;
+  h->positionY = y;
+  h->tailleX = tailleX;
+  h->tailleY = tailleY;
+  h->vitesse = 0;
+  h->acceleration = 3;
+  h->deceleration = 0.1;
 }
 
 // Lecture du fichier de terrain
@@ -108,96 +120,93 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain){
   char couleurR[10];
   char couleurV[10];
   char couleurB[10];
-    printf("%s \n",chaine);
+
   while(chaine[i] != '\\') { // on parcourt jusqu'� la fin de la ligne
-  /* R�cup�ration du nombre de checkpoints */
-  if(chaine[i] == '-') {
-    i ++;
-    printf("%d %d\n", i, j);
-    while(chaine[i] != '-') {
-      nbCheckPoints[j] = chaine[i];
+    /* R�cup�ration du nombre de checkpoints */
+    if(chaine[i] == '-') {
       i ++;
-      j ++;
-    }
-    printf("%d %d\n", i, j);
-    terrain->nbCheckPoints = atol(nbCheckPoints);
-  }
-  /* R�cup�ration des donn�es de chaque checkpoints */
-  if(chaine[i] == '{'){
-    i ++;
-    while(chaine[i] != '}'){
-      // pour chaque checkpoint
-      if(chaine[i] == '['){
-        j = 0;
-        i++;
-        // Récupération des coordonnées x et y
-        while(chaine[i] != ',') {
-          centreX[j] = chaine[i];
-          j++;
-          i++;
-        }
-        j = 0;
-        i++;
-        while(chaine[i] != ';') {
-          centreY[j] = chaine[i];
-          j++;
-          i++;
-        }
-        j = 0;
-        i++;
-        // Récupération du rayon
-        while(chaine[i] != ';') {
-          rayon[j] = chaine[i];
-          j++;
-          i++;
-        }
-        j = 0;
-        i++;
-        // Récupération des 3 couleurs
-        while(chaine[i] != ',') {
-          couleurR[j] = chaine[i];
-          j++;
-          i++;
-        }
-        j = 0;
-        i++;
-        while(chaine[i] != ',') {
-          couleurV[j] = chaine[i];
-          j++;
-          i++;
-        }
-        j = 0;
-        i++;
-        while(chaine[i] != ']'){
-          couleurB[j] = chaine[i];
-          j++;
-          i++;
-        }
-        terrain->tableCheckPoints[k].centreX = atol(centreX);
-        terrain->tableCheckPoints[k].centreY = atol(centreY);
-        terrain->tableCheckPoints[k].couleurR = atol(couleurR);
-        terrain->tableCheckPoints[k].couleurV = atol(couleurV);
-        terrain->tableCheckPoints[k].couleurB = atol(couleurB);
-        terrain->tableCheckPoints[k].rayon = atol(rayon);
-        terrain->tableCheckPoints[k].visible = 1;
-        // A AMELIORER
-        for(l = 0; l <3; l++) {
-          rayon[l] = ' ';
-          centreX[l] = ' ';
-          centreY[l] = ' ';
-          couleurR[l] = ' ';
-          couleurV[l] = ' ';
-          couleurB[l] = ' ';
-        }
-        k++;
+      while(chaine[i] != '-') {
+        nbCheckPoints[j] = chaine[i];
+        i ++;
+        j ++;
       }
-      i++;
+      terrain->nbCheckPoints = atol(nbCheckPoints);
     }
-    printf("%d\n", i);
+    /* R�cup�ration des donn�es de chaque checkpoints */
+    if(chaine[i] == '{'){
+      i ++;
+      while(chaine[i] != '}'){
+        // pour chaque checkpoint
+        if(chaine[i] == '['){
+          j = 0;
+          i++;
+          // Récupération des coordonnées x et y
+          while(chaine[i] != ',') {
+            centreX[j] = chaine[i];
+            j++;
+            i++;
+          }
+          j = 0;
+          i++;
+          while(chaine[i] != ';') {
+            centreY[j] = chaine[i];
+            j++;
+            i++;
+          }
+          j = 0;
+          i++;
+          // Récupération du rayon
+          while(chaine[i] != ';') {
+            rayon[j] = chaine[i];
+            j++;
+            i++;
+          }
+          j = 0;
+          i++;
+          // Récupération des 3 couleurs
+          while(chaine[i] != ',') {
+            couleurR[j] = chaine[i];
+            j++;
+            i++;
+          }
+          j = 0;
+          i++;
+          while(chaine[i] != ',') {
+            couleurV[j] = chaine[i];
+            j++;
+            i++;
+          }
+          j = 0;
+          i++;
+          while(chaine[i] != ']'){
+            couleurB[j] = chaine[i];
+            j++;
+            i++;
+          }
+          terrain->tableCheckPoints[k].centreX = atol(centreX);
+          terrain->tableCheckPoints[k].centreY = atol(centreY);
+          terrain->tableCheckPoints[k].couleurR = atol(couleurR);
+          terrain->tableCheckPoints[k].couleurV = atol(couleurV);
+          terrain->tableCheckPoints[k].couleurB = atol(couleurB);
+          terrain->tableCheckPoints[k].rayon = atol(rayon);
+          terrain->tableCheckPoints[k].visible = 1;
+          // A AMELIORER
+          for(l = 0; l <3; l++) {
+            rayon[l] = ' ';
+            centreX[l] = ' ';
+            centreY[l] = ' ';
+            couleurR[l] = ' ';
+            couleurV[l] = ' ';
+            couleurB[l] = ' ';
+          }
+          k++;
+        }
+        i++;
+      }
+    }
+    i++;
   }
-  i++;
-}
-fclose(fichier);
+  fclose(fichier);
 }
 
 void dessinCarre(int full){
@@ -344,7 +353,7 @@ int main(int argc, char** argv) {
   float chrono = 0;
 
   Hovercraft colmycraft;
-  initHovercraft(&colmycraft, 60, 90, 60, 60);
+  initHovercraft(&colmycraft, 600, 600, 60, 60);
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain);
 
@@ -391,14 +400,46 @@ int main(int argc, char** argv) {
       }
     }
 
-    /// DESSIN DE L'HOVERCRAFT !!
+    /// DESSIN DE L'HOVERCRAFT
     glPushMatrix();
       glTranslatef(colmycraft.positionX, colmycraft.positionY, 0);
       glScalef(colmycraft.tailleX,colmycraft.tailleY,1);
+      glRotatef(colmycraft.anglePosition - 90, 0.0, 0.0, 1.0);
       dessinHovercraft();
     glPopMatrix();
 
-   collision(colmycraft.positionX, colmycraft.positionY, colmycraft.tailleX, colmycraft.tailleY, &terrain); // taille de l'hovercraft + sa position
+    collision(colmycraft.positionX, colmycraft.positionY, colmycraft.tailleX, colmycraft.tailleY, &terrain);
+
+    // gestion de la décélération / des frottements
+    if(colmycraft.vitesse > 0.000000 + colmycraft.deceleration) {
+      colmycraft.vitesse -= colmycraft.deceleration;
+    }
+
+    //déplacement de l'hovercraft
+    colmycraft.positionY  += colmycraft.vitesse*sin(PI * (colmycraft.anglePosition) / 180);
+    colmycraft.positionX  += colmycraft.vitesse*cos(PI * (colmycraft.anglePosition) / 180);
+
+    // Bords Y
+    if(colmycraft.positionY + colmycraft.tailleY > windowHeight) {
+      colmycraft.positionY = windowHeight - colmycraft.tailleY;
+    }
+    if(colmycraft.positionY - colmycraft.tailleY < 0) {
+      colmycraft.positionY = colmycraft.tailleY;
+    }
+    // Bords X
+    if(colmycraft.positionX + colmycraft.tailleX > windowWidth) {
+      colmycraft.positionX = windowWidth - colmycraft.tailleX;
+    }
+    if(colmycraft.positionX - colmycraft.tailleX < 0) {
+      colmycraft.positionX = colmycraft.tailleX;
+    }
+
+    // if(colmycraft.positionY + colmycraft.tailleY < windowHeight && colmycraft.positionY - colmycraft.tailleY > 0) {
+    //   colmycraft.positionY  += colmycraft.vitesse*sin(PI * (colmycraft.anglePosition) / 180);
+    // }
+    // if(colmycraft.positionX + colmycraft.tailleX < windowWidth && colmycraft.positionX - colmycraft.tailleX > 0) {
+    //   colmycraft.positionX  += colmycraft.vitesse*cos(PI * (colmycraft.anglePosition) / 180);
+    // }
 
     /* Echange du front et du back buffer : mise �  jour de la fenêtre */
     SDL_GL_SwapBuffers();
@@ -409,7 +450,7 @@ int main(int argc, char** argv) {
       /* L'utilisateur ferme la fenetre : */
       if(e.type == SDL_QUIT) {
         loop = 0;
-        printf("Temps de jeu écoulé : %f\n", chrono/24);
+        printf("Temps de jeu ecoule : %f\n", chrono/24);
         break;
       }
 
@@ -425,26 +466,25 @@ int main(int argc, char** argv) {
 
         // gestion des touches du clavier
         case SDL_KEYDOWN:
-        switch( e.key.keysym.sym ){
+        switch(e.key.keysym.sym ){
           case SDLK_RIGHT:
-              colmycraft.positionX  += 50;
-            break;
+              colmycraft.anglePosition -= colmycraft.angleMouvement;
+          break;
 
           case SDLK_LEFT:
-            colmycraft.positionX  -= 50;
+            colmycraft.anglePosition += colmycraft.angleMouvement;
           break;
 
           case SDLK_UP:
-          colmycraft.positionY  += 50;
-          break;
-
-          case SDLK_DOWN:
-          colmycraft.positionY  -= 50;
+            if(colmycraft.vitesse < VITESSE_MAX) {
+              colmycraft.vitesse += colmycraft.acceleration;
+            }
           break;
 
           default:
           break;
         }
+
         break;
 
         default:
