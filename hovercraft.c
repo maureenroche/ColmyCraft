@@ -9,7 +9,7 @@
 #define FOND_R 0
 #define FOND_V 128
 #define FOND_B 232
-#define VITESSE_MAX 20
+#define VITESSE_MAX 10
 
 // Structure check point
 typedef struct CheckPoint {
@@ -99,8 +99,8 @@ void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
   h->tailleX = tailleX;
   h->tailleY = tailleY;
   h->vitesse = 0;
-  h->acceleration = 3;
-  h->deceleration = 0.1;
+  h->acceleration = 2;
+  h->deceleration = 0.025;
 }
 
 // Lecture du fichier de terrain
@@ -325,14 +325,12 @@ int aGagne(Terrain t) {
 
 void collision(int positionX, int positionY, int tailleX, int tailleY, Terrain * terrain) {
   int i;
-  int x = positionX + tailleX;
-  int y = positionY + tailleY;
   for(i = 0; i < terrain->nbCheckPoints; i ++)
   {
-    if((x >= terrain->tableCheckPoints[i].centreX - terrain->tableCheckPoints[i].rayon)&&
-        (x <= terrain->tableCheckPoints[i].centreX + terrain->tableCheckPoints[i].rayon) &&
-        (y >= terrain->tableCheckPoints[i].centreY - terrain->tableCheckPoints[i].rayon) &&
-        (y <= terrain->tableCheckPoints[i].centreY + terrain->tableCheckPoints[i].rayon))
+    if((positionY + tailleY > terrain->tableCheckPoints[i].centreY) &&
+        (positionY < terrain->tableCheckPoints[i].centreY + terrain->tableCheckPoints[i].rayon) &&
+        (positionX + tailleX > terrain->tableCheckPoints[i].centreX) &&
+        (positionX < terrain->tableCheckPoints[i].centreX + terrain->tableCheckPoints[i].rayon))
     {
       terrain->tableCheckPoints[i].visible = 0;
     }
@@ -353,7 +351,7 @@ int main(int argc, char** argv) {
   float chrono = 0;
 
   Hovercraft colmycraft;
-  initHovercraft(&colmycraft, 600, 600, 60, 60);
+  initHovercraft(&colmycraft, 0, 0, 60, 60);
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain);
 
@@ -433,13 +431,6 @@ int main(int argc, char** argv) {
     if(colmycraft.positionX - colmycraft.tailleX < 0) {
       colmycraft.positionX = colmycraft.tailleX;
     }
-
-    // if(colmycraft.positionY + colmycraft.tailleY < windowHeight && colmycraft.positionY - colmycraft.tailleY > 0) {
-    //   colmycraft.positionY  += colmycraft.vitesse*sin(PI * (colmycraft.anglePosition) / 180);
-    // }
-    // if(colmycraft.positionX + colmycraft.tailleX < windowWidth && colmycraft.positionX - colmycraft.tailleX > 0) {
-    //   colmycraft.positionX  += colmycraft.vitesse*cos(PI * (colmycraft.anglePosition) / 180);
-    // }
 
     /* Echange du front et du back buffer : mise �  jour de la fenêtre */
     SDL_GL_SwapBuffers();
