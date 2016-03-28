@@ -104,9 +104,9 @@ void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
 }
 
 // Lecture du fichier de terrain
-void lectureInfosTerrain(char chaine[], Terrain * terrain){
+void lectureInfosTerrain(char chaine[], Terrain * terrain, char nomFichier[]){
   FILE *fichier = NULL;
-  fichier = fopen("terrain.txt", "r");
+  fichier = fopen(nomFichier, "r");
   if (fichier == NULL){
     exit(EXIT_FAILURE);
   }
@@ -353,7 +353,7 @@ int main(int argc, char** argv) {
   Hovercraft colmycraft;
   initHovercraft(&colmycraft, 0, 0, 60, 60);
   /* Lecture des infos du terrain et initialisation du terrain */
-  lectureInfosTerrain(infosTerrain, &terrain);
+  lectureInfosTerrain(infosTerrain, &terrain, argv[1]);
 
   /* Dimensions de la fenêtre */
   unsigned int windowWidth  = 1500;
