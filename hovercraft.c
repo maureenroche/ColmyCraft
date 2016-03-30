@@ -10,6 +10,7 @@
 #define FOND_V 128
 #define FOND_B 232
 #define VITESSE_MAX 10
+#define ZOOM 800
 
 // Structure check point
 typedef struct CheckPoint {
@@ -61,7 +62,7 @@ void reshape(unsigned int windowWidth, unsigned int windowHeight) {
   glViewport(0, 0, windowWidth, windowHeight);
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  gluOrtho2D(0, windowWidth, 0, windowHeight);
+  gluOrtho2D(0, (float)ZOOM, 0, ((float)windowHeight/windowWidth)*ZOOM);
 }
 
 void setVideoMode(unsigned int windowWidth, unsigned int windowHeight) {
@@ -93,7 +94,7 @@ void initTerrain(Terrain * terrain){
 // Initialisation de l'hovercraft
 void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
   h->anglePosition = 90;
-  h->angleMouvement = 45;
+  h->angleMouvement = 30;
   h->positionX = x;
   h->positionY = y;
   h->tailleX = tailleX;
@@ -349,9 +350,8 @@ int main(int argc, char** argv) {
   char infosTerrain[800] = "";
   int i;
   float chrono = 0;
-
   Hovercraft colmycraft;
-  initHovercraft(&colmycraft, 0, 0, 60, 60);
+  initHovercraft(&colmycraft, 0, 0, 30, 30);
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain, argv[1]);
 
@@ -383,6 +383,7 @@ int main(int argc, char** argv) {
     glClearColor(FOND_R/255.0,FOND_V/255.0,FOND_B/255.0,1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+    glTranslatef(- colmycraft.positionX + colmycraft.tailleX + 350, - colmycraft.positionY + colmycraft.tailleY + 175, 1);
 
     chrono ++;
     if(aGagne(terrain) == 1) {
@@ -418,17 +419,17 @@ int main(int argc, char** argv) {
     colmycraft.positionX  += colmycraft.vitesse*cos(PI * (colmycraft.anglePosition) / 180);
 
     // Bords Y
-    if(colmycraft.positionY + colmycraft.tailleY > windowHeight) {
+    if(colmycraft.positionY + colmycraft.tailleY >= windowHeight) {
       colmycraft.positionY = windowHeight - colmycraft.tailleY;
     }
-    if(colmycraft.positionY - colmycraft.tailleY < 0) {
+    if(colmycraft.positionY - colmycraft.tailleY <= 0) {
       colmycraft.positionY = colmycraft.tailleY;
     }
     // Bords X
-    if(colmycraft.positionX + colmycraft.tailleX > windowWidth) {
+    if(colmycraft.positionX + colmycraft.tailleX >= windowWidth) {
       colmycraft.positionX = windowWidth - colmycraft.tailleX;
     }
-    if(colmycraft.positionX - colmycraft.tailleX < 0) {
+    if(colmycraft.positionX - colmycraft.tailleX <= 0) {
       colmycraft.positionX = colmycraft.tailleX;
     }
 
