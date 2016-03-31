@@ -46,6 +46,8 @@ typedef struct Hovercraft {
     float acceleration;
     /* valeur de diminution de la vitesse en pixels par image */
     float deceleration;
+    /* Checkpoint le plus près de l'hovercraft */
+    CheckPoint * prochainCheckpoint;
 } Hovercraft;
 
 
@@ -102,6 +104,7 @@ void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
   h->vitesse = 0;
   h->acceleration = 2;
   h->deceleration = 0.025;
+  h->prochainCheckpoint = NULL; 
 }
 
 // Lecture du fichier de terrain
@@ -338,6 +341,11 @@ void collision(int positionX, int positionY, int tailleX, int tailleY, Terrain *
   }
 }
 
+float distance(int xA, int yA, int xB, int yB)
+{
+  return sqrt(pow(xB-xA, 2) + pow(yB-yA, 2));
+}
+
 int main(int argc, char** argv) {
 
   if(argc != 2){
@@ -354,6 +362,7 @@ int main(int argc, char** argv) {
   initHovercraft(&colmycraft, 0, 0, 30, 30);
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain, argv[1]);
+  colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[0];
 
   /* Dimensions de la fenêtre */
   unsigned int windowWidth  = 1500;
@@ -383,21 +392,55 @@ int main(int argc, char** argv) {
     glClearColor(FOND_R/255.0,FOND_V/255.0,FOND_B/255.0,1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
+
+    // déplacement de la caméra
     glTranslatef(- colmycraft.positionX + colmycraft.tailleX + 350, - colmycraft.positionY + colmycraft.tailleY + 175, 1);
+    // dessin des bordures
+    glPushMatrix();
+      glColor3f(0,0,0);
+      glBegin(GL_LINE_LOOP);
+        glVertex2f(0, 0);
+        glVertex2f(windowWidth, 0);
+        glVertex2f(windowWidth, windowHeight);
+        glVertex2f(0, windowHeight);
+        glVertex2f(0, 0);
+      glEnd();
+    glPopMatrix();
 
     chrono ++;
     if(aGagne(terrain) == 1) {
       loop = 0;
       printf("vous avez gagné en %f secondes !", chrono/24);
     }
+
     /// DESSIN DES CHECKPOINTS
     for(i = 0; i < terrain.nbCheckPoints; i ++) {
       if(terrain.tableCheckPoints[i].visible == 1) {
         glPushMatrix();
           dessinCheckPoint(terrain.tableCheckPoints[i]);
         glPopMatrix();
+
+        if(colmycraft.prochainCheckpoint->visible == 1)
+        {
+          if(distance(terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY, colmycraft.positionX, colmycraft.positionY)
+            < distance(colmycraft.prochainCheckpoint->centreX, colmycraft.prochainCheckpoint->centreY, colmycraft.positionX, colmycraft.positionY)) {
+            colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
+          }
+        }
+        else {
+          colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
+        }
       }
     }
+
+    /// DESSIN DE LA FLECHE VERS LE PROCHAIN CHECKPOINT
+    glPushMatrix();
+      glColor3f(1, 1, 0);
+      glBegin(GL_LINE_LOOP);
+        glVertex2f(colmycraft.positionX, colmycraft.positionY);
+        glVertex2f(colmycraft.positionX + (colmycraft.prochainCheckpoint->centreX - colmycraft.positionX)/2.5, colmycraft.positionY + (colmycraft.prochainCheckpoint->centreY - colmycraft.positionY)/2.5);
+      glEnd();
+    glPopMatrix();
 
     /// DESSIN DE L'HOVERCRAFT
     glPushMatrix();
@@ -406,6 +449,7 @@ int main(int argc, char** argv) {
       glRotatef(colmycraft.anglePosition - 90, 0.0, 0.0, 1.0);
       dessinHovercraft();
     glPopMatrix();
+
 
     collision(colmycraft.positionX, colmycraft.positionY, colmycraft.tailleX, colmycraft.tailleY, &terrain);
 
