@@ -7,9 +7,9 @@
 #include <math.h>
 #define PI 3.141592653589793
 #define SEGMENTS 60
-#define FOND_R 10
-#define FOND_V 134
-#define FOND_B 185
+#define FOND_R 253
+#define FOND_V 217
+#define FOND_B 95
 #define VITESSE_MAX 10
 #define ZOOM 800
 
@@ -105,7 +105,7 @@ void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
   h->vitesse = 0;
   h->acceleration = 2;
   h->deceleration = 0.025;
-  h->prochainCheckpoint = NULL; 
+  h->prochainCheckpoint = NULL;
 }
 
 // Lecture du fichier de terrain
