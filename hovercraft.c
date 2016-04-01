@@ -1,4 +1,5 @@
 #include <SDL/SDL.h>
+#include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
 #include <stdlib.h>
@@ -348,8 +349,8 @@ float distance(int xA, int yA, int xB, int yB)
 
 int main(int argc, char** argv) {
 
-  if(argc != 2){
-    printf("usage : %s terrain.txt\n",argv[0]);
+  if(argc != 3){
+    printf("usage : %s terrain.txt image.jpg\n",argv[0]);
     return EXIT_FAILURE;
   }
 
@@ -378,6 +379,41 @@ int main(int argc, char** argv) {
   setVideoMode(windowWidth, windowHeight);
   reshape(windowWidth,windowHeight);
 
+  // CREATION D'UNE IMAGE
+  SDL_Surface* image = IMG_Load(argv[2]);
+    if(image == NULL) {
+        fprintf(stderr, "Impossible de charger l'image %s\n", argv[2]);
+        return EXIT_FAILURE;
+  }
+
+  GLuint textureId;
+    glGenTextures(1, &textureId);
+    glBindTexture(GL_TEXTURE_2D, textureId);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
+    GLenum format;
+    switch(image->format->BytesPerPixel) {
+        case 1:
+            format = GL_RED;
+            break;
+        case 3:
+            format = GL_RGB;
+            break;
+        case 4:
+            format = GL_RGBA;
+            break;
+        default:
+            fprintf(stderr, "Format des pixels de l'image %s non pris en charge\n", argv[1]);
+            return EXIT_FAILURE;
+    }
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    SDL_FreeSurface(image);
+
+
   /* Titre de la fenêtre */
   SDL_WM_SetCaption("ColmyCraft", NULL);
 
@@ -395,17 +431,36 @@ int main(int argc, char** argv) {
 
     // déplacement de la caméra
     glTranslatef(- colmycraft.positionX + colmycraft.tailleX + 350, - colmycraft.positionY + colmycraft.tailleY + 175, 1);
+
     // dessin des bordures
     glPushMatrix();
-      glColor3f(0,0,0);
-      glBegin(GL_LINE_LOOP);
+
+    // on affiche une texture 2D ici
+        glEnable(GL_TEXTURE_2D);
+        // à partir de maintenant, on parle de cette texture
+        glBindTexture(GL_TEXTURE_2D, textureId);
+      glBegin(GL_QUADS);
+        glColor3f(1,1,1);
+
+        glTexCoord2f(0, 1);
         glVertex2f(0, 0);
+
+        glTexCoord2f(1, 1);
         glVertex2f(windowWidth, 0);
+
+        glTexCoord2f(1, 0);
         glVertex2f(windowWidth, windowHeight);
+
+        glTexCoord2f(0, 0);
         glVertex2f(0, windowHeight);
-        glVertex2f(0, 0);
       glEnd();
+
+      // on a fini avec la texture
+      glBindTexture(GL_TEXTURE_2D, 0);
+      // on affiche plus de texture
+      glDisable(GL_TEXTURE_2D);
     glPopMatrix();
+
 
     chrono ++;
     if(aGagne(terrain) == 1) {
@@ -536,6 +591,8 @@ int main(int argc, char** argv) {
       SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
     }
   }
+
+  glDeleteTextures(1, &textureId);
 
   /* Liberation des ressources associ�es �  la L */
   SDL_Quit();

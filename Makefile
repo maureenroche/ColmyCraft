@@ -1,6 +1,6 @@
 CC       =  gcc
 CFLAGS   = -Wall -O2 -g
-LIB      = -lSDL -lGLU -lGL -lm  
+LIB      = -lSDL -lSDL_image -lGLU -lGL -lm  
 INCLUDES = 
 
 OBJ      = hovercraft.o 
