@@ -7,9 +7,9 @@
 #include <math.h>
 #define PI 3.141592653589793
 #define SEGMENTS 60
-#define FOND_R 0
-#define FOND_V 128
-#define FOND_B 232
+#define FOND_R 10
+#define FOND_V 134
+#define FOND_B 185
 #define VITESSE_MAX 10
 #define ZOOM 800
 
