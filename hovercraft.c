@@ -2,9 +2,11 @@
 #include <SDL/SDL_image.h>
 #include <GL/gl.h>
 #include <GL/glu.h>
+#include <GL/glut.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+
 #define PI 3.141592653589793
 #define SEGMENTS 60
 #define FOND_R 253
@@ -22,6 +24,7 @@ typedef struct CheckPoint {
   int couleurV;
   int couleurB;
   int visible;
+  int teste;
 } CheckPoint;
 
 
@@ -83,6 +86,7 @@ void initCheckPoint(CheckPoint *point){
   point->couleurR = 0;
   point->couleurV = 0;
   point->couleurB = 0;
+  point->teste = 0;
 }
 
 // Initialisation Terrain
@@ -347,6 +351,19 @@ float distance(int xA, int yA, int xB, int yB)
   return sqrt(pow(xB-xA, 2) + pow(yB-yA, 2));
 }
 
+void ecrireTexte(float x, float y, void* font, const char* s)
+{
+    glColor3f(1, 1, 1);
+    glDisable(GL_TEXTURE_2D);
+ glDisable(GL_DEPTH_TEST);
+ glRasterPos2f(x, y);
+ while(*s)
+ {
+ glutBitmapCharacter(font, *s);
+ s++;
+ }
+}
+
 int main(int argc, char** argv) {
 
   if(argc != 3){
@@ -357,8 +374,9 @@ int main(int argc, char** argv) {
   Terrain terrain;
   initTerrain(&terrain);
   char infosTerrain[800] = "";
-  int i;
+  int i, checkPointsNonVisibles = 0;
   float chrono = 0;
+  char texte[50];
   Hovercraft colmycraft;
   initHovercraft(&colmycraft, 0, 0, 30, 30);
   /* Lecture des infos du terrain et initialisation du terrain */
@@ -412,7 +430,6 @@ int main(int argc, char** argv) {
     glBindTexture(GL_TEXTURE_2D, 0);
 
     SDL_FreeSurface(image);
-
 
   /* Titre de la fenêtre */
   SDL_WM_SetCaption("ColmyCraft", NULL);
@@ -486,11 +503,15 @@ int main(int argc, char** argv) {
           colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
         }
       }
+      else if(terrain.tableCheckPoints[i].teste == 0) {
+        checkPointsNonVisibles ++;
+        terrain.tableCheckPoints[i].teste = 1;
+      }
     }
 
     /// DESSIN DE LA FLECHE VERS LE PROCHAIN CHECKPOINT
     glPushMatrix();
-      glColor3f(1, 1, 0);
+      glColor3f(1, 1, 1);
       glBegin(GL_LINE_LOOP);
         glVertex2f(colmycraft.positionX, colmycraft.positionY);
         glVertex2f(colmycraft.positionX + (colmycraft.prochainCheckpoint->centreX - colmycraft.positionX)/2.5, colmycraft.positionY + (colmycraft.prochainCheckpoint->centreY - colmycraft.positionY)/2.5);
@@ -505,6 +526,9 @@ int main(int argc, char** argv) {
       dessinHovercraft();
     glPopMatrix();
 
+    // ajoute à la chaîne de caractère texte le nombre de checkpoints non visibles
+    sprintf(texte, "Score : %d / %d", checkPointsNonVisibles, terrain.nbCheckPoints);
+    ecrireTexte(colmycraft.positionX - 350, colmycraft.positionY + 175, GLUT_BITMAP_HELVETICA_18, texte);
 
     collision(colmycraft.positionX, colmycraft.positionY, colmycraft.tailleX, colmycraft.tailleY, &terrain);
 
