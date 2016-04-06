@@ -481,8 +481,7 @@ int main(int argc, char** argv) {
 
     chrono ++;
     if(aGagne(terrain) == 1) {
-      loop = 0;
-      printf("vous avez gagné en %f secondes !", chrono/24);
+      ecrireTexte(colmycraft.positionX - colmycraft.tailleX - 20, colmycraft.positionY + colmycraft.tailleY, GLUT_BITMAP_HELVETICA_18, "VOUS AVEZ GAGNE !");
     }
 
     /// DESSIN DES CHECKPOINTS
