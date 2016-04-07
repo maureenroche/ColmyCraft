@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
+#include <string.h>
 
 #define PI 3.141592653589793
 #define SEGMENTS 60
@@ -364,6 +365,7 @@ void ecrireTexte(float x, float y, void* font, const char* s)
  }
 }
 
+
 int main(int argc, char** argv) {
 
   if(argc != 3){
@@ -379,6 +381,7 @@ int main(int argc, char** argv) {
   char texte[50];
   Hovercraft colmycraft;
   initHovercraft(&colmycraft, 0, 0, 30, 30);
+  int fondR, fondV, fondB;
   /* Lecture des infos du terrain et initialisation du terrain */
   lectureInfosTerrain(infosTerrain, &terrain, argv[1]);
   colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[0];
@@ -396,6 +399,27 @@ int main(int argc, char** argv) {
   /* Ouverture d'une fen�tre et cr�ation d'un contexte OpenGL */
   setVideoMode(windowWidth, windowHeight);
   reshape(windowWidth,windowHeight);
+
+    if(strcmp(argv[2], "background-Level1.jpg") == 0){
+          fondR = 253;
+          fondV = 217;
+          fondB = 95;
+    }
+    else if(strcmp(argv[2], "background-Level2.jpg") == 0) {
+          fondR = 88;
+          fondV = 162;
+          fondB = 63;
+    }
+    else if(strcmp(argv[2], "background-Level3.jpg") == 0) {
+          fondR = 58;
+          fondV = 45;
+          fondB = 36;
+    }
+    else {
+          fondR = 0;
+          fondV = 0;
+          fondB = 0;
+    }
 
   // CREATION D'UNE IMAGE
   SDL_Surface* image = IMG_Load(argv[2]);
@@ -442,7 +466,7 @@ int main(int argc, char** argv) {
 
     /* Placer ici le code de dessin */
     glClear(GL_COLOR_BUFFER_BIT);
-    glClearColor(FOND_R/255.0,FOND_V/255.0,FOND_B/255.0,1);
+    glClearColor(fondR/255.0,fondV/255.0,fondB/255.0,1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
