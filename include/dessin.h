@@ -13,6 +13,7 @@
 
 void dessinCarre(int full);
 void dessinCercle(int nbTraits,int full);
+void dessinJetMoteur();
 void dessinHovercraft();
 void dessinCheckPoint(CheckPoint cp);
 

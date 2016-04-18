@@ -278,7 +278,6 @@ int main(int argc, char** argv) {
     Uint32 elapsedTime = SDL_GetTicks() - startTime;
 
     /* Si trop peu de temps s'est �coul�, on met en pause le programme */
-    printf("framerate: %d, %d\n", FRAMERATE_MILLISECONDS, elapsedTime );
     if(elapsedTime < FRAMERATE_MILLISECONDS) {
       SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
     }

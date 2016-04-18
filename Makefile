@@ -1,9 +1,9 @@
 CC       =  gcc
 CFLAGS   = -Wall -O2 -g
-LIB      = -lSDL -lSDL_image -lGLU -lGL -lGLUT -lm  
-INCLUDES = 
+LIB      = -lSDL -lSDL_image -lGLU -lGL -lglut -lm
+INCLUDES =
 
-OBJ      = obj/dessin.o obj/fonctionsGL.o obj/fonctionsInit.o obj/fonctionsJeu.o obj/lectureEcriture.o obj/hovercraft.o 
+OBJ      = dessin.o fonctionsGL.o fonctionsInit.o fonctionsJeu.o lectureEcriture.o hovercraft.o
 RM       = rm -f
 BIN      = hovercraft
 DIRNAME  = $(shell basename $$PWD)
@@ -20,45 +20,42 @@ $(BIN) : $(OBJ)
 
 hovercraft.o : hovercraft.c
 	@echo "compile hovercraft"
-	$(CC) $(CFLAGS) -c $<  
+	$(CC) $(CFLAGS) -c $<
 	@echo "done..."
 
-dessin.o : dessin.c
+dessin.o : src/dessin.c
 	@echo "compile dessin"
-	$(CC) $(CFLAGS) -c $<  
+	$(CC) $(CFLAGS) -c $<
 	@echo "done..."
 
-fonctionsGL.o : fonctionsGL.c
+fonctionsGL.o : src/fonctionsGL.c
 	@echo "compile fonctionsGL"
-	$(CC) $(CFLAGS) -c $<  
+	$(CC) $(CFLAGS) -c $<
 	@echo "done..."
 
-fonctionsInit.o : fonctionsInit.c
+fonctionsInit.o : src/fonctionsInit.c
 	@echo "compile fonctionsInit"
-	$(CC) $(CFLAGS) -c $<  
+	$(CC) $(CFLAGS) -c $<
 	@echo "done..."
 
-fonctionsJeu.o : fonctionsJeu.c
+fonctionsJeu.o : src/fonctionsJeu.c
 	@echo "compile fonctionsJeu"
-	$(CC) $(CFLAGS) -c $<  
+	$(CC) $(CFLAGS) -c $<
 	@echo "done..."
 
-lectureEcriture.o : lectureEcriture.c
+lectureEcriture.o : src/lectureEcriture.c
 	@echo "compile lectureEcriture"
-	$(CC) $(CFLAGS) -c $<  
+	$(CC) $(CFLAGS) -c $<
 	@echo "done..."
 
-clean :	
+clean :
 	@echo "**************************"
 	@echo "CLEAN"
 	@echo "**************************"
-	$(RM) *~ $(OBJ) $(BIN) 
+	$(RM) *~ $(OBJ) $(BIN)
 
-tar : clean 
+tar : clean
 	@echo "**************************"
 	@echo "TAR"
 	@echo "**************************"
 	cd .. && tar cvfz $(BACKUP) $(DIRNAME)
-
-
-
