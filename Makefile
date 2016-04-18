@@ -3,7 +3,7 @@ CFLAGS   = -Wall -O2 -g
 LIB      = -lSDL -lSDL_image -lGLU -lGL -lGLUT -lm  
 INCLUDES = 
 
-OBJ      = hovercraft.o 
+OBJ      = obj/dessin.o obj/fonctionsGL.o obj/fonctionsInit.o obj/fonctionsJeu.o obj/lectureEcriture.o obj/hovercraft.o 
 RM       = rm -f
 BIN      = hovercraft
 DIRNAME  = $(shell basename $$PWD)
@@ -19,7 +19,32 @@ $(BIN) : $(OBJ)
 	@echo "--------------------------------------------------------------"
 
 hovercraft.o : hovercraft.c
-	@echo "compile minimal"
+	@echo "compile hovercraft"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+dessin.o : dessin.c
+	@echo "compile dessin"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+fonctionsGL.o : fonctionsGL.c
+	@echo "compile fonctionsGL"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+fonctionsInit.o : fonctionsInit.c
+	@echo "compile fonctionsInit"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+fonctionsJeu.o : fonctionsJeu.c
+	@echo "compile fonctionsJeu"
+	$(CC) $(CFLAGS) -c $<  
+	@echo "done..."
+
+lectureEcriture.o : lectureEcriture.c
+	@echo "compile lectureEcriture"
 	$(CC) $(CFLAGS) -c $<  
 	@echo "done..."
 

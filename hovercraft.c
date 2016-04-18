@@ -1,11 +1,11 @@
 #include "include/hovercraft.h"
 
 #include "include/structures.h"
-#include "src/fonctionsGL.c"
-#include "src/fonctionsInit.c"
-#include "src/lectureEcriture.c"
-#include "src/dessin.c"
-#include "src/fonctionsJeu.c"
+#include "include/fonctionsGL.h"
+#include "include/fonctionsInit.h"
+#include "include/lectureEcriture.h"
+#include "include/dessin.h"
+#include "include/fonctionsJeu.h"
 
 int main(int argc, char** argv) {
 
@@ -104,7 +104,6 @@ int main(int argc, char** argv) {
   while(loop) {
     /* R�cup�ration du temps au début de la boucle */
     Uint32 startTime = SDL_GetTicks();
-
      /* Attente d'1/10 de seconde */
      SDL_Delay(100);
 
@@ -279,6 +278,7 @@ int main(int argc, char** argv) {
     Uint32 elapsedTime = SDL_GetTicks() - startTime;
 
     /* Si trop peu de temps s'est �coul�, on met en pause le programme */
+    printf("framerate: %d, %d\n", FRAMERATE_MILLISECONDS, elapsedTime );
     if(elapsedTime < FRAMERATE_MILLISECONDS) {
       SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
     }

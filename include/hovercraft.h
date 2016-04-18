@@ -10,12 +10,6 @@
 #include <stdio.h>
 #include <math.h>
 
-#define PI 3.141592653589793
-#define SEGMENTS 60
-#define VITESSE_MAX 10
-#define ZOOM 800
-
-
 /* Nombre de bits par pixel de la fenêtre */
 static const unsigned int BIT_PER_PIXEL = 32;
 

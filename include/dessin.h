@@ -1,5 +1,13 @@
-#ifndef HOVERCRAFT_H_
-#define HOVERCRAFT_H_
+#ifndef DESSIN_H
+#define DESSIN_H
+
+#include <SDL/SDL.h>
+#include <GL/gl.h>
+#include <GL/glu.h>
+#include <GL/glut.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <math.h>
 
 #include "structures.h"
 

@@ -1,6 +1,11 @@
 #ifndef STRUCTURES_H_
 #define STRUCTURES_H_
 
+#define PI 3.141592653589793
+#define SEGMENTS 60
+#define VITESSE_MAX 10
+#define ZOOM 800
+
 // Structure check point
 typedef struct CheckPoint {
   int rayon;

@@ -2,6 +2,8 @@
 #define INIT_H_
 
 #include "structures.h"
+#include <stdlib.h>
+#include <stdio.h>
 
 // Initialisation CheckPoint
 void initCheckPoint(CheckPoint *point);

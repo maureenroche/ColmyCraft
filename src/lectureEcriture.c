@@ -1,8 +1,8 @@
 #include "../include/lectureEcriture.h"
 
 // Lecture du fichier de terrain
-void lectureInfosTerrain(char chaine[], Terrain * terrain, char nomFichier
-  if(strcmp(nomFichier, "niveau1.txt") != 0 && strcmp(nomFichier, "niveau3.txt") != 0 && strcmp(nomFichier, "niveau3.txt") != 0){
+void lectureInfosTerrain(char chaine[], Terrain * terrain, char nomFichier[]) {
+  if(strcmp(nomFichier, "niveau1.txt") != 0 && strcmp(nomFichier, "niveau2.txt") != 0 && strcmp(nomFichier, "niveau3.txt") != 0){
     exit(EXIT_FAILURE);
     }
   FILE *fichier = NULL;

@@ -1,4 +1,5 @@
 #include "../include/fonctionsJeu.h"
+#include <math.h>
 
 int aGagne(Terrain t) {
   int gagne = 1;
