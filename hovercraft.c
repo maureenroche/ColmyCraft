@@ -113,8 +113,6 @@ int main(int argc, char** argv) {
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-
-
     // déplacement de la caméra
     glTranslatef(- colmycraft.positionX + colmycraft.tailleX + 350, - colmycraft.positionY + colmycraft.tailleY + 175, 1);
 
@@ -191,6 +189,9 @@ int main(int argc, char** argv) {
       glTranslatef(colmycraft.positionX, colmycraft.positionY, 0);
       glScalef(colmycraft.tailleX,colmycraft.tailleY,1);
       glRotatef(colmycraft.anglePosition - 90, 0.0, 0.0, 1.0);
+      if (colmycraft.vitesse > 3.0) {
+        dessinJetMoteur();
+      }
       dessinHovercraft();
     glPopMatrix();
 
@@ -235,8 +236,6 @@ int main(int argc, char** argv) {
         loop = 0;
         break;
       }
-
-      /* Quelques exemples de traitement d'evenements : */
       switch(e.type) {
         /* resize window */
         case SDL_VIDEORESIZE:

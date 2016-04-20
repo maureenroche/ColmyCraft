@@ -69,208 +69,151 @@ void dessinCarreArrondi(){
 
 
 void dessinJetMoteur() {
-      glEnable(GL_BLEND);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      //Jet Gauche
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  //Jet Gauche
+  glPushMatrix();
+    glLineWidth(5);
+    glColor4f(1,1,1,0.2);
       glPushMatrix();
-        glLineWidth(5);
-        glColor4f(1,1,1,0.2);
-          glPushMatrix();
-            glTranslatef(-0.2,-0.7,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
-          glPushMatrix();
-            glColor4f(1,1,1,0.2);
-            glTranslatef(-0.23,-0.8,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
-          glPushMatrix();
-            glColor4f(1,1,1,0.2);
-            glTranslatef(-0.25,-0.9,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
-          glPushMatrix();
-            glColor4f(1,1,1,0.2);
-            glTranslatef(-0.27,-1,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
+        glTranslatef(-0.2,-0.7,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
       glPopMatrix();
+      glPushMatrix();
+        glColor4f(1,1,1,0.2);
+        glTranslatef(-0.23,-0.8,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
+      glPopMatrix();
+      glPushMatrix();
+        glColor4f(1,1,1,0.2);
+        glTranslatef(-0.25,-0.9,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
+      glPopMatrix();
+      glPushMatrix();
+        glColor4f(1,1,1,0.2);
+        glTranslatef(-0.27,-1,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
+      glPopMatrix();
+  glPopMatrix();
 
-      //Jet Droit
+  //Jet Droit
+  glPushMatrix();
+    glLineWidth(5);
+    glColor4f(1,1,1,0.2);
       glPushMatrix();
-        glLineWidth(5);
-        glColor4f(1,1,1,0.2);
-          glPushMatrix();
-            glTranslatef(0.2,-0.7,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
-          glPushMatrix();
-            glColor4f(1,1,1,0.2);
-            glTranslatef(0.23,-0.8,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
-          glPushMatrix();
-            glColor4f(1,1,1,0.2);
-            glTranslatef(0.25,-0.9,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
-          glPushMatrix();
-            glColor4f(1,1,1,0.2);
-            glTranslatef(0.27,-1,1);
-            glScalef(0.3,0.3,1);
-            dessinCercle(200,0);
-          glPopMatrix();
+        glTranslatef(0.2,-0.7,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
       glPopMatrix();
+      glPushMatrix();
+        glColor4f(1,1,1,0.2);
+        glTranslatef(0.23,-0.8,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
+      glPopMatrix();
+      glPushMatrix();
+        glColor4f(1,1,1,0.2);
+        glTranslatef(0.25,-0.9,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
+      glPopMatrix();
+      glPushMatrix();
+        glColor4f(1,1,1,0.2);
+        glTranslatef(0.27,-1,0);
+        glScalef(0.3,0.3,1);
+        dessinCercle(200,0);
+      glPopMatrix();
+  glPopMatrix();
+  glLineWidth(1);
+
 }
 
 void dessinHovercraft() {
 
-    //Structure
-    glPushMatrix();
-      glColor3f(0.21,0.14,0.06);
-      glBegin(GL_POLYGON);
-        glVertex2f(0,1);
-        glVertex2f(-0.5, 0.5);
-        glVertex2f(-0.4, -0.7);
-        glVertex2f(0.4,-0.7);
-        glVertex2f(0.5,0.5);
-      glEnd();
-    glPopMatrix();
+  //Structure
+  glPushMatrix();
+    glColor3f(0.21,0.14,0.06);
+    glBegin(GL_POLYGON);
+      glVertex2f(0,1);
+      glVertex2f(-0.5, 0.5);
+      glVertex2f(-0.4, -0.7);
+      glVertex2f(0.4,-0.7);
+      glVertex2f(0.5,0.5);
+    glEnd();
+  glPopMatrix();
 
-    //Centre du bateau
-    glPushMatrix();
-      glColor3f(0.36,0.22,0.08);
-      glBegin(GL_POLYGON);
-        glVertex2f(-0.4,0.4);
-        glVertex2f(0.4,0.4);
-        glVertex2f(0.26,-0.65);
-        glVertex2f(-0.26,-0.65);
-      glEnd();
-    glPopMatrix();
+  //Centre du bateau
+  glPushMatrix();
+    glColor3f(0.36,0.22,0.08);
+    glBegin(GL_POLYGON);
+      glVertex2f(-0.4,0.4);
+      glVertex2f(0.4,0.4);
+      glVertex2f(0.26,-0.65);
+      glVertex2f(-0.26,-0.65);
+    glEnd();
+  glPopMatrix();
 
-    //Intérieur
-    glPushMatrix();
-      glColor3f(0.96,0.89,0.79);
-      glBegin(GL_POLYGON);
-        glVertex2f(-0.3, 0.4);
-        glVertex2f(0.3,0.4);
-        glVertex2f(0.2,-0.5);
-        glVertex2f(-0.2, -0.5);
-      glEnd();
-    glPopMatrix();
+  //Intérieur
+  glPushMatrix();
+    glColor3f(0.96,0.89,0.79);
+    glBegin(GL_POLYGON);
+      glVertex2f(-0.3, 0.4);
+      glVertex2f(0.3,0.4);
+      glVertex2f(0.2,-0.5);
+      glVertex2f(-0.2, -0.5);
+    glEnd();
+  glPopMatrix();
 
-    //Cabine
-    glPushMatrix();
-      glColor3f(0,0,0);
-      glBegin(GL_POLYGON);
-        glVertex2f(-0.25, -0.2);
-        glVertex2f(0.25,-0.2);
-        glVertex2f(0.2,-0.5);
-        glVertex2f(-0.2, -0.5);
-      glEnd();
-    glPopMatrix();
+  //Cabine
+  glPushMatrix();
+    glColor3f(0,0,0);
+    glBegin(GL_POLYGON);
+      glVertex2f(-0.25, -0.2);
+      glVertex2f(0.25,-0.2);
+      glVertex2f(0.2,-0.5);
+      glVertex2f(-0.2, -0.5);
+    glEnd();
+  glPopMatrix();
 
-    //Siege
-    glPushMatrix();
-      glColor3f(0,0,0);
-      glTranslatef(0,0.1,0);
-      glScalef(0.13,0.11,1);
-      dessinCarreArrondi();
-    glPopMatrix();
+  //Siege
+  glPushMatrix();
+    glColor3f(0,0,0);
+    glTranslatef(0,0.1,0);
+    glScalef(0.13,0.11,1);
+    dessinCarreArrondi();
+  glPopMatrix();
 
-    //Tableau de bord
-    glPushMatrix();
-      glColor3f(0.87,0.80,0.71);
-      glTranslatef(0,0.4,0);
-      glScalef(0.6,0.3,1);
-      dessinCercle(200,1);
-    glPopMatrix();
+  //Tableau de bord
+  glPushMatrix();
+    glColor3f(0.87,0.80,0.71);
+    glTranslatef(0,0.4,0);
+    glScalef(0.6,0.3,1);
+    dessinCercle(200,1);
+  glPopMatrix();
 
-    //Avant du bateau
-    glPushMatrix();
-      glColor3f(0.36,0.22,0.08);
-      glBegin(GL_POLYGON);
-        glVertex2f(0,1);
-        glVertex2f(-0.4,0.4);
-        glVertex2f(0.4,0.4);
-      glEnd();
-    glPopMatrix();
+  //Avant du bateau
+  glPushMatrix();
+    glColor3f(0.36,0.22,0.08);
+    glBegin(GL_POLYGON);
+      glVertex2f(0,1);
+      glVertex2f(-0.4,0.4);
+      glVertex2f(0.4,0.4);
+    glEnd();
+  glPopMatrix();
 
-    //Atache devant
-    glPushMatrix();
-      glColor3f(0.96,0.89,0.79);
-      glBegin(GL_POLYGON);
-        glVertex2f(0,0.9);
-        glVertex2f(-0.07,0.75);
-        glVertex2f(0.07,0.75);
-      glEnd();
-    glPopMatrix();
-
-
-    //Jet Gauche
-    glPushMatrix();
-      glLineWidth(5);
-      glColor4f(1,1,1,0.2);
-        glPushMatrix();
-          glTranslatef(-0.2,-0.7,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-        glPushMatrix();
-          glColor4f(1,1,1,0.2);
-          glTranslatef(-0.23,-0.8,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-        glPushMatrix();
-          glColor4f(1,1,1,0.2);
-          glTranslatef(-0.25,-0.9,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-        glPushMatrix();
-          glColor4f(1,1,1,0.2);
-          glTranslatef(-0.27,-1,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-    glPopMatrix();
-
-    //Jet Droit
-    glPushMatrix();
-      glLineWidth(5);
-      glColor4f(1,1,1,0.2);
-        glPushMatrix();
-          glTranslatef(0.2,-0.7,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-        glPushMatrix();
-          glColor4f(1,1,1,0.2);
-          glTranslatef(0.23,-0.8,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-        glPushMatrix();
-          glColor4f(1,1,1,0.2);
-          glTranslatef(0.25,-0.9,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-        glPushMatrix();
-          glColor4f(1,1,1,0.2);
-          glTranslatef(0.27,-1,1);
-          glScalef(0.3,0.3,1);
-          dessinCercle(200,0);
-        glPopMatrix();
-    glPopMatrix();
+  //Atache devant
+  glPushMatrix();
+    glColor3f(0.96,0.89,0.79);
+    glBegin(GL_POLYGON);
+      glVertex2f(0,0.9);
+      glVertex2f(-0.07,0.75);
+      glVertex2f(0.07,0.75);
+    glEnd();
+  glPopMatrix();
 
 }
 
