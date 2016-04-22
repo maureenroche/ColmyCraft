@@ -3,7 +3,7 @@ CFLAGS   = -Wall -O2 -g
 LIB      = -lSDL -lSDL_image -lGLU -lGL -lglut -lm
 INCLUDES =
 
-OBJ      = dessin.o fonctionsGL.o fonctionsInit.o fonctionsJeu.o lectureEcriture.o hovercraft.o
+OBJ      = dessin.o fonctionsGL.o fonctionsInit.o fonctionsJeu.o lectureEcriture.o audio.o hovercraft.o
 RM       = rm -f
 BIN      = hovercraft
 DIRNAME  = $(shell basename $$PWD)
@@ -44,6 +44,11 @@ fonctionsJeu.o : src/fonctionsJeu.c
 	@echo "done..."
 
 lectureEcriture.o : src/lectureEcriture.c
+	@echo "compile lectureEcriture"
+	$(CC) $(CFLAGS) -c $<
+	@echo "done..."
+
+audio.o : src/audio.c
 	@echo "compile lectureEcriture"
 	$(CC) $(CFLAGS) -c $<
 	@echo "done..."

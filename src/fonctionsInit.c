@@ -29,7 +29,7 @@ void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
   h->tailleX = tailleX;
   h->tailleY = tailleY;
   h->vitesse = 0;
-  h->acceleration = 2;
+  h->acceleration = 4;
   h->deceleration = 0.2;
   h->prochainCheckpoint = NULL;
 }
