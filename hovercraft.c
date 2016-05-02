@@ -113,8 +113,9 @@ int main(int argc, char** argv) {
 	/* Load the WAV */
 	// the specs, length and buffer of our wav are filled
 	if(SDL_LoadWAV(MUS_PATH, &wav_spec, &wav_buffer, &wav_length) == NULL){
-	  return 1;
+	  printf("Impossible de charger le fichier son. \n");
 	}
+
 	// set the callback function
 	wav_spec.callback = my_audio_callback;
 	wav_spec.userdata = NULL;
@@ -124,8 +125,7 @@ int main(int argc, char** argv) {
 
 	/* Open the audio device */
 	if ( SDL_OpenAudio(&wav_spec, NULL) < 0 ){
-	  fprintf(stderr, "Couldn't open audio: %s\n", SDL_GetError());
-	  exit(-1);
+	  printf("Impossible d'ouvrir le fichier son. \n");
 	}
 
 	/* Start playing */
@@ -135,7 +135,7 @@ int main(int argc, char** argv) {
 
   /* Boucle d'affichage */
   int loop = 1;
-  while(loop && audio_len > 0) {
+  while(loop /*&& audio_len > 0*/) {
     /* R�cup�ration du temps au début de la boucle */
     Uint32 startTime = SDL_GetTicks();
      /* Attente d'1/10 de seconde */
