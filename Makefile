@@ -1,5 +1,5 @@
 CC       =  gcc
-CFLAGS   = -Wall -O2 -g
+CFLAGS   = -Wall -O2 -std=c99 -g
 LIB      = -lSDL -lSDL_image -lGLU -lGL -lglut -lm
 INCLUDES =
 
