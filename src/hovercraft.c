@@ -1,12 +1,12 @@
-#include "include/hovercraft.h"
+#include "../include/hovercraft.h"
 
-#include "include/structures.h"
-#include "include/fonctionsGL.h"
-#include "include/fonctionsInit.h"
-#include "include/lectureEcriture.h"
-#include "include/dessin.h"
-#include "include/fonctionsJeu.h"
-#include "include/audio.h"
+#include "../include/structures.h"
+#include "../include/fonctionsGL.h"
+#include "../include/fonctionsInit.h"
+#include "../include/lectureEcriture.h"
+#include "../include/dessin.h"
+#include "../include/fonctionsJeu.h"
+#include "../include/audio.h"
 
 int main(int argc, char** argv) {
 
@@ -177,7 +177,6 @@ int main(int argc, char** argv) {
         niveau ++;
         initTerrain(&terrain);
         checkPointsNonVisibles = 0;
-        printf("niveau :%d\n", niveau);
         for (int j = 0; j < 12; j++) {
           niveauTexte[j]=' ';
         }
