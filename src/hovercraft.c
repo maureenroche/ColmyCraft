@@ -12,11 +12,6 @@ int main(int argc, char** argv) {
 
   glutInit(&argc, argv);
 
-  // if(argc != 3){
-  //   printf("usage : %s terrain.txt image.jpg\n",argv[0]);
-  //   return EXIT_FAILURE;
-  // }
-
   Terrain terrain;
   initTerrain(&terrain);
   char infosTerrain[800] = "";
@@ -122,7 +117,7 @@ int main(int argc, char** argv) {
 
 
 
-  /* Boucle d'affichage */
+  /* BOUCLE D'AFFICHAGE */
   int loop = 1;
   while(loop /*&& audio_len > 0*/) {
     /* R�cup�ration du temps au début de la boucle */
@@ -170,9 +165,35 @@ int main(int argc, char** argv) {
 
 
     chrono ++;
+    //Changement de niveau
     if(aGagne(terrain) == 1 && niveau<=3) {
       if (niveau == 3) {
-        ecrireTexte(colmycraft.positionX - colmycraft.tailleX - 20, colmycraft.positionY + colmycraft.tailleY, GLUT_BITMAP_HELVETICA_18, "VOUS AVEZ GAGNE !");
+        // Affichage page Winner
+        image = IMG_Load("winner.jpg");
+        if(image == NULL) {
+          ecrireTexte(colmycraft.positionX - colmycraft.tailleX - 20, colmycraft.positionY + colmycraft.tailleY, GLUT_BITMAP_HELVETICA_18, "VOUS AVEZ GAGNE !");
+        }
+        glGenTextures(1, &textureId);
+        glBindTexture(GL_TEXTURE_2D, textureId);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        switch(image->format->BytesPerPixel) {
+          case 1:
+          format = GL_RED;
+          break;
+          case 3:
+          format = GL_RGB;
+          break;
+          case 4:
+          format = GL_RGBA;
+          break;
+          default:
+          fprintf(stderr, "Format des pixels de l'image %s non pris en charge\n", "winner.jpg");
+          return EXIT_FAILURE;
+        }
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        SDL_FreeSurface(image);
+
       }else{
         niveau ++;
         initTerrain(&terrain);
@@ -209,7 +230,7 @@ int main(int argc, char** argv) {
         lectureInfosTerrain(infosTerrain, &terrain, niveauTexte);
         colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[0];
 
-        // CREATION D'UNE IMAGE
+        // Création de la map
         image = IMG_Load(carte);
         if(image == NULL) {
           fprintf(stderr, "Impossible de charger l'image %s\n", carte);
