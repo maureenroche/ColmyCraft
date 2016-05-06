@@ -165,6 +165,51 @@ int main(int argc, char** argv) {
 
 
     chrono ++;
+
+    /// DESSIN DES CHECKPOINTS
+    for(i = 0; i < terrain.nbCheckPoints; i ++) {
+      if(terrain.tableCheckPoints[i].visible == 1) {
+        glPushMatrix();
+        dessinCheckPoint(terrain.tableCheckPoints[i]);
+        glPopMatrix();
+
+        if(colmycraft.prochainCheckpoint->visible == 1)
+        {
+          if(distance(terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY, colmycraft.positionX, colmycraft.positionY)
+          < distance(colmycraft.prochainCheckpoint->centreX, colmycraft.prochainCheckpoint->centreY, colmycraft.positionX, colmycraft.positionY)) {
+            colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
+          }
+        }
+        else {
+          colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
+        }
+      }
+      else if(terrain.tableCheckPoints[i].teste == 0) {
+        checkPointsNonVisibles ++;
+        terrain.tableCheckPoints[i].teste = 1;
+      }
+    }
+
+    /// DESSIN DE LA FLECHE VERS LE PROCHAIN CHECKPOINT
+    glPushMatrix();
+    glColor3f(1, 1, 1);
+    glBegin(GL_LINE_LOOP);
+    glVertex2f(colmycraft.positionX, colmycraft.positionY);
+    glVertex2f(colmycraft.positionX + (colmycraft.prochainCheckpoint->centreX - colmycraft.positionX)/2.5, colmycraft.positionY + (colmycraft.prochainCheckpoint->centreY - colmycraft.positionY)/2.5);
+    glEnd();
+    glPopMatrix();
+
+    /// DESSIN DE L'HOVERCRAFT
+    glPushMatrix();
+    glTranslatef(colmycraft.positionX, colmycraft.positionY, 0);
+    glScalef(colmycraft.tailleX,colmycraft.tailleY,1);
+    glRotatef(colmycraft.anglePosition - 90, 0.0, 0.0, 1.0);
+    if (colmycraft.vitesse > 3.0) {
+      dessinJetMoteur();
+    }
+    dessinHovercraft();
+    glPopMatrix();
+
     //Changement de niveau
     if(aGagne(terrain) == 1 && niveau<=3) {
       if (niveau == 3) {
@@ -203,16 +248,16 @@ int main(int argc, char** argv) {
         glColor3f(1,1,1);
 
         glTexCoord2f(0, 1);
-        glVertex2f(colmycraft.positionX - 350, colmycraft.positionY - 175);
+        glVertex2f(colmycraft.positionX - 415, colmycraft.positionY - 250);
 
         glTexCoord2f(1, 1);
-        glVertex2f(colmycraft.positionX + 350, colmycraft.positionY - 175);
+        glVertex2f(colmycraft.positionX + 450, colmycraft.positionY - 250);
 
         glTexCoord2f(1, 0);
-        glVertex2f(colmycraft.positionX + 350, colmycraft.positionY + 175);
+        glVertex2f(colmycraft.positionX + 450, colmycraft.positionY + 250);
 
         glTexCoord2f(0, 0);
-        glVertex2f(colmycraft.positionX - 350, colmycraft.positionY + 175);
+        glVertex2f(colmycraft.positionX - 415, colmycraft.positionY + 250);
 
         glEnd();
 
@@ -223,7 +268,8 @@ int main(int argc, char** argv) {
         glDisable(GL_TEXTURE_2D);
         glPopMatrix();
 
-      }else{
+      }
+      else{
         niveau ++;
         initTerrain(&terrain);
         checkPointsNonVisibles = 0;
@@ -288,49 +334,6 @@ int main(int argc, char** argv) {
       }
     }
 
-    /// DESSIN DES CHECKPOINTS
-    for(i = 0; i < terrain.nbCheckPoints; i ++) {
-      if(terrain.tableCheckPoints[i].visible == 1) {
-        glPushMatrix();
-        dessinCheckPoint(terrain.tableCheckPoints[i]);
-        glPopMatrix();
-
-        if(colmycraft.prochainCheckpoint->visible == 1)
-        {
-          if(distance(terrain.tableCheckPoints[i].centreX, terrain.tableCheckPoints[i].centreY, colmycraft.positionX, colmycraft.positionY)
-          < distance(colmycraft.prochainCheckpoint->centreX, colmycraft.prochainCheckpoint->centreY, colmycraft.positionX, colmycraft.positionY)) {
-            colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
-          }
-        }
-        else {
-          colmycraft.prochainCheckpoint = &terrain.tableCheckPoints[i];
-        }
-      }
-      else if(terrain.tableCheckPoints[i].teste == 0) {
-        checkPointsNonVisibles ++;
-        terrain.tableCheckPoints[i].teste = 1;
-      }
-    }
-
-    /// DESSIN DE LA FLECHE VERS LE PROCHAIN CHECKPOINT
-    glPushMatrix();
-    glColor3f(1, 1, 1);
-    glBegin(GL_LINE_LOOP);
-    glVertex2f(colmycraft.positionX, colmycraft.positionY);
-    glVertex2f(colmycraft.positionX + (colmycraft.prochainCheckpoint->centreX - colmycraft.positionX)/2.5, colmycraft.positionY + (colmycraft.prochainCheckpoint->centreY - colmycraft.positionY)/2.5);
-    glEnd();
-    glPopMatrix();
-
-    /// DESSIN DE L'HOVERCRAFT
-    glPushMatrix();
-    glTranslatef(colmycraft.positionX, colmycraft.positionY, 0);
-    glScalef(colmycraft.tailleX,colmycraft.tailleY,1);
-    glRotatef(colmycraft.anglePosition - 90, 0.0, 0.0, 1.0);
-    if (colmycraft.vitesse > 3.0) {
-      dessinJetMoteur();
-    }
-    dessinHovercraft();
-    glPopMatrix();
 
     // ajoute à la chaîne de caractère texte le nombre de checkpoints non visibles
     sprintf(texte, "Score : %d / %d", checkPointsNonVisibles, terrain.nbCheckPoints);
