@@ -169,14 +169,15 @@ int main(int argc, char** argv) {
     if(aGagne(terrain) == 1 && niveau<=3) {
       if (niveau == 3) {
         // Affichage page Winner
-        image = IMG_Load("winner.jpg");
-        if(image == NULL) {
+        SDL_Surface* imageGagne = IMG_Load("winner.jpg");
+        if(imageGagne == NULL) {
           ecrireTexte(colmycraft.positionX - colmycraft.tailleX - 20, colmycraft.positionY + colmycraft.tailleY, GLUT_BITMAP_HELVETICA_18, "VOUS AVEZ GAGNE !");
         }
-        glGenTextures(1, &textureId);
-        glBindTexture(GL_TEXTURE_2D, textureId);
+        GLuint textureWinnerId;
+        glGenTextures(1, &textureWinnerId);
+        glBindTexture(GL_TEXTURE_2D, textureWinnerId);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        switch(image->format->BytesPerPixel) {
+        switch(imageGagne->format->BytesPerPixel) {
           case 1:
           format = GL_RED;
           break;
@@ -190,9 +191,37 @@ int main(int argc, char** argv) {
           fprintf(stderr, "Format des pixels de l'image %s non pris en charge\n", "winner.jpg");
           return EXIT_FAILURE;
         }
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, image->w, image->h, 0, format, GL_UNSIGNED_BYTE, image->pixels);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, imageGagne->w, imageGagne->h, 0, format, GL_UNSIGNED_BYTE, imageGagne->pixels);
         glBindTexture(GL_TEXTURE_2D, 0);
-        SDL_FreeSurface(image);
+        SDL_FreeSurface(imageGagne);
+
+        // on affiche une texture 2D ici
+        glEnable(GL_TEXTURE_2D);
+        // à partir de maintenant, on parle de cette texture
+        glBindTexture(GL_TEXTURE_2D, textureWinnerId);
+        glBegin(GL_QUADS);
+        glColor3f(1,1,1);
+
+        glTexCoord2f(0, 1);
+        glVertex2f(colmycraft.positionX - 350, colmycraft.positionY - 175);
+
+        glTexCoord2f(1, 1);
+        glVertex2f(colmycraft.positionX + 350, colmycraft.positionY - 175);
+
+        glTexCoord2f(1, 0);
+        glVertex2f(colmycraft.positionX + 350, colmycraft.positionY + 175);
+
+        glTexCoord2f(0, 0);
+        glVertex2f(colmycraft.positionX - 350, colmycraft.positionY + 175);
+
+        glEnd();
+
+
+        // on a fini avec la texture
+        glBindTexture(GL_TEXTURE_2D, 0);
+        // on affiche plus de texture
+        glDisable(GL_TEXTURE_2D);
+        glPopMatrix();
 
       }else{
         niveau ++;
