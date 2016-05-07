@@ -1,7 +1,10 @@
 #include "../include/dessin.h"
 
-void dessinCarre(int full){
-  if(full==0){
+/** Dessin d'un carre unitaire **/
+void dessinCarre(int full)
+{
+  if(full==0)
+  {
     glBegin(GL_LINE_LOOP);
       glVertex2f(-0.5,-0.5);
       glVertex2f(-0.5, 0.5);
@@ -9,7 +12,8 @@ void dessinCarre(int full){
       glVertex2f( 0.5,-0.5);
     glEnd();
   }
-  else if(full==1){
+  else if(full==1)
+  {
     glBegin(GL_POLYGON);
       glVertex2f(-0.5,-0.5);
       glVertex2f(-0.5, 0.5);
@@ -19,26 +23,34 @@ void dessinCarre(int full){
   }
 }
 
-void dessinCercle(int nbTraits,int full){
-  float angle=(M_PI*2)/nbTraits;
+/** Dessin d'un cercle unitaire **/
+void dessinCercle(int nbTraits,int full)
+{
+  float angle=(PI*2)/nbTraits;
   int i;
-  if(full==0){
+  if(full==0)
+  {
     glBegin(GL_LINE_LOOP);
-    for(i=0; i<nbTraits;i++){
+    for(i=0; i<nbTraits;i++)
+    {
       glVertex2f(cos(i*angle)/2,sin(i*angle)/2);
     }
     glEnd();
   }
-  else if(full==1){
+  else if(full==1)
+  {
     glBegin(GL_POLYGON);
-    for(i=0; i<nbTraits;i++){
+    for(i=0; i<nbTraits;i++)
+    {
       glVertex2f(cos(i*angle)/2,sin(i*angle)/2);
     }
     glEnd();
   }
 }
 
-void dessinCarreArrondi(){
+/** Dessin d'un carre arrondi unitaire **/
+void dessinCarreArrondi()
+{
 	glPushMatrix();
 		glTranslatef(-0.5,0.5,0);
 		dessinCercle(100,1);
@@ -66,12 +78,13 @@ void dessinCarreArrondi(){
 	glPopMatrix();
 }
 
-
-
-void dessinJetMoteur() {
+/** Dessin de l'effet du moteur sur l'eau **/
+void dessinJetMoteur()
+{
   glEnable(GL_BLEND);
   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-  //Jet Gauche
+  
+  // Jet Gauche
   glPushMatrix();
     glLineWidth(5);
     glColor4f(1,1,1,0.2);
@@ -100,7 +113,7 @@ void dessinJetMoteur() {
       glPopMatrix();
   glPopMatrix();
 
-  //Jet Droit
+  // Jet Droit
   glPushMatrix();
     glLineWidth(5);
     glColor4f(1,1,1,0.2);
@@ -129,12 +142,12 @@ void dessinJetMoteur() {
       glPopMatrix();
   glPopMatrix();
   glLineWidth(1);
-
 }
 
-void dessinHovercraft() {
-
-  //Structure
+/** Dessin de l'hovercraft **/
+void dessinHovercraft()
+{
+  // Structure
   glPushMatrix();
     glColor3f(0.21,0.14,0.06);
     glBegin(GL_POLYGON);
@@ -146,7 +159,7 @@ void dessinHovercraft() {
     glEnd();
   glPopMatrix();
 
-  //Centre du bateau
+  // Centre du bateau
   glPushMatrix();
     glColor3f(0.36,0.22,0.08);
     glBegin(GL_POLYGON);
@@ -157,7 +170,7 @@ void dessinHovercraft() {
     glEnd();
   glPopMatrix();
 
-  //Intérieur
+  // Intérieur
   glPushMatrix();
     glColor3f(0.96,0.89,0.79);
     glBegin(GL_POLYGON);
@@ -168,7 +181,7 @@ void dessinHovercraft() {
     glEnd();
   glPopMatrix();
 
-  //Cabine
+  // Cabine
   glPushMatrix();
     glColor3f(0,0,0);
     glBegin(GL_POLYGON);
@@ -179,7 +192,7 @@ void dessinHovercraft() {
     glEnd();
   glPopMatrix();
 
-  //Siege
+  // Siege
   glPushMatrix();
     glColor3f(0,0,0);
     glTranslatef(0,0.1,0);
@@ -187,7 +200,7 @@ void dessinHovercraft() {
     dessinCarreArrondi();
   glPopMatrix();
 
-  //Tableau de bord
+  // Tableau de bord
   glPushMatrix();
     glColor3f(0.87,0.80,0.71);
     glTranslatef(0,0.4,0);
@@ -195,7 +208,7 @@ void dessinHovercraft() {
     dessinCercle(200,1);
   glPopMatrix();
 
-  //Avant du bateau
+  // Avant du bateau
   glPushMatrix();
     glColor3f(0.36,0.22,0.08);
     glBegin(GL_POLYGON);
@@ -205,7 +218,7 @@ void dessinHovercraft() {
     glEnd();
   glPopMatrix();
 
-  //Atache devant
+  // Atache devant
   glPushMatrix();
     glColor3f(0.96,0.89,0.79);
     glBegin(GL_POLYGON);
@@ -217,9 +230,9 @@ void dessinHovercraft() {
 
 }
 
-
-
-void dessinCheckPoint(CheckPoint cp) {
+/** Dessin du checkpoint **/
+void dessinCheckPoint(CheckPoint cp)
+{
   float diametre = 1;
   float alpha;
   int i;
@@ -229,7 +242,8 @@ void dessinCheckPoint(CheckPoint cp) {
 
   glBegin(GL_POLYGON);
   glColor3f(cp.couleurR/255.0, cp.couleurV/255.0, cp.couleurB/255.0);
-  for(i = 0; i <= SEGMENTS; i ++){
+  for(i = 0; i <= SEGMENTS; i ++)
+  {
     alpha = 2*PI*i/SEGMENTS;
     glVertex2f(cos(alpha)*(diametre/2), sin(alpha)*(diametre/2));
     alpha = 2*PI*(i+1)/SEGMENTS;

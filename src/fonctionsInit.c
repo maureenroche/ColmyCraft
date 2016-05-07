@@ -1,7 +1,8 @@
 #include "../include/fonctionsInit.h"
 
-// Initialisation CheckPoint
-void initCheckPoint(CheckPoint *point){
+/** Initialisation d'une structure CheckPoint **/
+void initCheckPoint(CheckPoint *point)
+{
   point->rayon = 0;
   point->centreX = 0;
   point->centreY = 0;
@@ -11,17 +12,20 @@ void initCheckPoint(CheckPoint *point){
   point->teste = 0;
 }
 
-// Initialisation Terrain
-void initTerrain(Terrain * terrain){
+/** Initialisation d'une structure Terrain **/
+void initTerrain(Terrain * terrain)
+{
   terrain->nbCheckPoints = 0;
   int i;
-  for (i = 0; i < 100; i++) {
+  for (i = 0; i < 100; i++)
+  {
     initCheckPoint(&(terrain->tableCheckPoints[i]));
   }
 }
 
-// Initialisation de l'hovercraft
-void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY) {
+/** Initialisation de l'hovercraft **/
+void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY)
+{
   h->anglePosition = 90;
   h->angleMouvement = 30;
   h->positionX = x;

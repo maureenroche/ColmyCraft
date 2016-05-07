@@ -5,13 +5,13 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-// Initialisation CheckPoint
+/** Initialisation d'une structure CheckPoint **/
 void initCheckPoint(CheckPoint *point);
 
-// Initialisation Terrain
+/** Initialisation d'une structure Terrain **/
 void initTerrain(Terrain * terrain);
 
-// Initialisation de l'hovercraft
+/** Initialisation de l'hovercraft **/
 void initHovercraft(Hovercraft * h, int x, int y, int tailleX, int tailleY);
 
 #endif

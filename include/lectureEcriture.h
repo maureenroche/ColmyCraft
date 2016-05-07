@@ -10,10 +10,10 @@
 
 #include "structures.h"
 
-// Lecture du fichier de terrain
+/** Lecture des informations du terrain dans un fichier **/
 void lectureInfosTerrain(char chaine[], Terrain * terrain, char nomFichier[]);
 
-// Ecrire du texte
+/** Ecriture d'un texte sur l'ecran **/
 void ecrireTexte(float x, float y, void* font, const char* s);
 
 

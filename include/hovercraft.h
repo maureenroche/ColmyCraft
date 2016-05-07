@@ -11,13 +11,13 @@
 #include <string.h>
 #include <math.h>
 
-/* Nombre de bits par pixel de la fenêtre */
+/** Nombre de bits par pixel de la fenêtre **/
 static const unsigned int BIT_PER_PIXEL = 32;
 
-/* Nombre minimal de millisecondes separant le rendu de deux images */
+/** Nombre minimal de millisecondes separant le rendu de deux images **/
 static const Uint32 FRAMERATE_MILLISECONDS = 1000 / 60;
 
-/* Nombre max de points dessin�s*/
+/** Nombre max de points dessines **/
 static const unsigned int NB_MAX_PT = 50;
 
 #endif

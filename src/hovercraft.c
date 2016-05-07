@@ -1,5 +1,4 @@
 #include "../include/hovercraft.h"
-
 #include "../include/structures.h"
 #include "../include/fonctionsGL.h"
 #include "../include/fonctionsInit.h"
@@ -8,7 +7,8 @@
 #include "../include/fonctionsJeu.h"
 #include "../include/audio.h"
 
-int main(int argc, char** argv) {
+int main(int argc, char** argv)
+{
 
   glutInit(&argc, argv);
 
@@ -21,9 +21,10 @@ int main(int argc, char** argv) {
   Hovercraft colmycraft;
   initHovercraft(&colmycraft, 0, 0, 30, 30);
   int fondR, fondV, fondB;
+
   /* Lecture des infos du terrain et initialisation du terrain */
-  char niveauTexte[]= "niveau1.txt";
-  char carte[]="background-Level1.jpg";
+  char niveauTexte[]= "txt/niveau1.txt";
+  char carte[]="images/background-Level1.jpg";
   fondR = 253;
   fondV = 217;
   fondB = 95;
@@ -86,33 +87,30 @@ int main(int argc, char** argv) {
 
 
   // CREATION SON
-  // Initialize SDL.
+  /* Initialisation de la SDL */
   if (SDL_Init(SDL_INIT_AUDIO) < 0) return 1;
 
-  // local variables
-  static Uint32 wav_length; // length of our sample
-  static Uint8 *wav_buffer; // buffer containing our audio file
-  static SDL_AudioSpec wav_spec; // the specs of our piece of music
+  static Uint32 wav_length;
+  static Uint8 *wav_buffer;
+  static SDL_AudioSpec wav_spec;
 
-  /* Load the WAV */
-  // the specs, length and buffer of our wav are filled
+  /* Chargement du fichier Wav */
   if(SDL_LoadWAV(MUS_PATH, &wav_spec, &wav_buffer, &wav_length) == NULL){
     printf("Impossible de charger le fichier son. \n");
   }
 
-  // set the callback function
   wav_spec.callback = my_audio_callback;
   wav_spec.userdata = NULL;
-  // set our global static variables
-  audio_pos = wav_buffer; // copy sound buffer
-  audio_len = wav_length; // copy file length
 
-  /* Open the audio device */
+  audio_pos = wav_buffer;
+  audio_len = wav_length;
+
+  /* Ouverture du fichier son */
   if ( SDL_OpenAudio(&wav_spec, NULL) < 0 ){
     printf("Impossible d'ouvrir le fichier son. \n");
   }
 
-  /* Start playing */
+  /* Jeu du son */
   SDL_PauseAudio(0);
 
 
@@ -120,21 +118,21 @@ int main(int argc, char** argv) {
   /* BOUCLE D'AFFICHAGE */
   int loop = 1;
   while(loop /*&& audio_len > 0*/) {
-    /* R�cup�ration du temps au début de la boucle */
+    /* Recuperation du temps au début de la boucle */
     Uint32 startTime = SDL_GetTicks();
     /* Attente d'1/10 de seconde */
     SDL_Delay(100);
 
-    /* Placer ici le code de dessin */
+    /* Code de dessin */
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(fondR/255.0,fondV/255.0,fondB/255.0,1);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
 
-    // déplacement de la caméra
+    /* déplacement de la caméra */
     glTranslatef(- colmycraft.positionX + colmycraft.tailleX + 350, - colmycraft.positionY + colmycraft.tailleY + 175, 1);
 
-    // dessin des bordures
+    /* dessin des bordures */
     glPushMatrix();
 
     // on affiche une texture 2D ici
@@ -210,11 +208,11 @@ int main(int argc, char** argv) {
     dessinHovercraft();
     glPopMatrix();
 
-    //Changement de niveau
+    /// CHANGEMENT DE NIVEAU
     if(aGagne(terrain) == 1 && niveau<=3) {
       if (niveau == 3) {
         // Affichage page Winner
-        SDL_Surface* imageGagne = IMG_Load("winner.jpg");
+        SDL_Surface* imageGagne = IMG_Load("images/winner.jpg");
         if(imageGagne == NULL) {
           ecrireTexte(colmycraft.positionX - colmycraft.tailleX - 20, colmycraft.positionY + colmycraft.tailleY, GLUT_BITMAP_HELVETICA_18, "VOUS AVEZ GAGNE !");
         }
@@ -281,22 +279,22 @@ int main(int argc, char** argv) {
         }
         switch (niveau) {
           case 1:
-          strcpy(niveauTexte, "niveau1.txt");
-          strcpy(carte, "background-Level1.jpg");
+          strcpy(niveauTexte, "txt/niveau1.txt");
+          strcpy(carte, "images/background-Level1.jpg");
           fondR = 253;
           fondV = 217;
           fondB = 95;
           break;
           case 2:
-          strcpy(niveauTexte, "niveau2.txt");
-          strcpy(carte, "background-Level2.jpg");
+          strcpy(niveauTexte, "txt/niveau2.txt");
+          strcpy(carte, "images/background-Level2.jpg");
           fondR = 88;
           fondV = 162;
           fondB = 63;
           break;
           case 3:
-          strcpy(niveauTexte, "niveau3.txt");
-          strcpy(carte, "background-Level3.jpg");
+          strcpy(niveauTexte, "txt/niveau3.txt");
+          strcpy(carte, "images/background-Level3.jpg");
           fondR = 58;
           fondV = 45;
           fondB = 36;
@@ -335,18 +333,18 @@ int main(int argc, char** argv) {
     }
 
 
-    // ajoute à la chaîne de caractère texte le nombre de checkpoints non visibles
+    // Ajoute à la chaîne de caractère texte le nombre de checkpoints non visibles
     sprintf(texte, "Score : %d / %d", checkPointsNonVisibles, terrain.nbCheckPoints);
     ecrireTexte(colmycraft.positionX - 350, colmycraft.positionY + 175, GLUT_BITMAP_HELVETICA_18, texte);
 
     collision(colmycraft.positionX, colmycraft.positionY, colmycraft.tailleX, colmycraft.tailleY, &terrain);
 
-    // gestion de la décélération / des frottements
+    // Gestion de la décélération / des frottements
     if(colmycraft.vitesse > 0.000000 + colmycraft.deceleration) {
       colmycraft.vitesse -= colmycraft.deceleration;
     }
 
-    //déplacement de l'hovercraft
+    // Déplacement de l'hovercraft
     colmycraft.positionY  += colmycraft.vitesse*sin(PI * (colmycraft.anglePosition) / 180);
     colmycraft.positionX  += colmycraft.vitesse*cos(PI * (colmycraft.anglePosition) / 180);
 
@@ -385,7 +383,7 @@ int main(int argc, char** argv) {
         reshape(windowWidth, windowHeight);
         break;
 
-        // gestion des touches du clavier
+        // Gestion des touches du clavier
         case SDL_KEYDOWN:
         switch(e.key.keysym.sym ){
           case SDLK_RIGHT:
@@ -413,20 +411,21 @@ int main(int argc, char** argv) {
       }
     }
 
-    /* Calcul du temps �coul� */
+    /* Calcul du temps ecoule */
     Uint32 elapsedTime = SDL_GetTicks() - startTime;
 
-    /* Si trop peu de temps s'est �coul�, on met en pause le programme */
+    /* Si trop peu de temps s'est ecoule, on met en pause le programme */
     if(elapsedTime < FRAMERATE_MILLISECONDS) {
       SDL_Delay(FRAMERATE_MILLISECONDS - elapsedTime);
     }
   }
-  // shut everything down
+
+  // Fin du jeu du son
   SDL_CloseAudio();
   SDL_FreeWAV(wav_buffer);
 
   glDeleteTextures(1, &textureId);
-  /* Liberation des ressources associ�es �  la L */
+  /* Liberation des ressources associ�es a la SDL */
   SDL_Quit();
 
   return EXIT_SUCCESS;
