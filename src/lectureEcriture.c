@@ -15,7 +15,11 @@ void lectureInfosTerrain(char chaine[], Terrain * terrain, char nomFichier[])
   {
     exit(EXIT_FAILURE);
   }
-  fgets(chaine, 800, fichier);
+  chaine = fgets(chaine, 800, fichier);
+  if(chaine == NULL)
+  {
+    exit(EXIT_FAILURE);
+  }
 
   int i = 0, j = 0, k = 0, l = 0;
   char nbCheckPoints[10];
